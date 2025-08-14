@@ -1,0 +1,9 @@
+/.cache
+/.idea
+/build
+/win_build
+/assets
+game.exe
+game.pdb
+game
+
