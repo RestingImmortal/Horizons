@@ -1,0 +1,81 @@
+name: continuous-build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'CMakeLists.txt'
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Up CMake
+        uses: lukka/get-cmake@v3.22.3
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=23
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Package Build
+        shell: bash
+        run: |
+          mkdir package
+          # Copy executables
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            cp game.exe package/
+          else
+            cp game package/
+          fi
+
+          cd package
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            7z a ../${{ runner.os }}.zip .
+          else
+            tar czf ../${{ runner.os }}.tar.gz .
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}
+          path: ${{ runner.os }}.*
+
+  release:
+    name: Update Continuous Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: builds
+
+      - name: Create or Update "continuous" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: continuous
+          name: Continuous Build
+          files: builds/**/*
+          prerelease: true
+          body: |
+            This is automatically updated when changes are pushed to `main`.
+            It contains the latest builds for:
+            - Linux
+            - Windows
+            - macOS
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
