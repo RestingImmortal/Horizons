@@ -7,6 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'CMakeLists.txt'
+      - '.github/workflows/continuous-build.yml'
 
 jobs:
   build:
@@ -19,6 +20,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Install Linux Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update --qq
+          sudo apt-get install -y --no-install-recommends libglfw3 libglfw3-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libxext-dev libxfixes-dev libwayland-dev libxkbcommon-dev
 
       - name: Set Up CMake
         uses: lukka/get-cmake@latest
