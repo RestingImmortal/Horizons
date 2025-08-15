@@ -1,0 +1,113 @@
+// Copyright 2025 RestingImmortal
+
+#include "Game.hpp"
+
+#include "Components.hpp"
+#include "Systems.hpp"
+#include "raylib.h"
+
+// Public Methods
+
+void Game::run() {
+    init();
+
+    while (!m_window.ShouldClose()) {
+        float dt = m_window.GetFrameTime();
+        update(dt);
+        render();
+    }
+}
+
+// Private Methods
+
+void Game::init() {
+    SetTargetFPS(60);
+
+    m_asset_manager.load_assets();
+
+    // RECTANGLEN'T
+    auto rect = m_registry.create();
+    m_registry.emplace<Components::Transform>(rect,
+        raylib::Vector2{100, 100},
+        raylib::Vector2{50, 50}
+    );
+    //m_registry.emplace<Components::Renderable>(rect, raylib::Color::Red());
+    auto& rectnt_renderable = m_registry.emplace<Components::Renderable>(rect);
+    rectnt_renderable.texture = m_asset_manager.get_texture("hmmyes");
+    m_registry.emplace<Components::RenderOrder>(rect, 0);
+
+    // BACKGROUND
+    auto background = m_registry.create();
+    m_registry.emplace<Components::Background>(background);
+    m_registry.emplace<Components::Transform>(background,
+        raylib::Vector2{200.0, 200.0},
+        raylib::Vector2{1920, 1080},
+        0.0f
+    );
+    auto& bg_render = m_registry.emplace<Components::Renderable>(background);
+    bg_render.texture = m_asset_manager.get_texture("bg");
+    m_registry.emplace<Components::RenderOrder>(background, -1000);
+
+    // Debug printing
+    auto ship = m_asset_manager.get_ship("example");
+    std::println("~~~~~~~\nExample ship:");
+    if (!ship) { std::println("Ruh roh!"); }
+    else {
+        auto ship_data = *ship;
+        std::println("Texture: {}", ship_data->texture);
+        for (auto weapon : ship_data->weapons) {
+            std::println("Weapon type: {}", weapon.weapon_type);
+            auto weapon_result = m_asset_manager.get_weapon(weapon.weapon_type);
+            if (!weapon_result) { std::println("Ruh roh!"); }
+            else {
+                std::println("Weapon munition: {}", (*weapon_result)->munition);
+                std::println("Weapon damage: {}", (*weapon_result)->damage);
+                std::println("Weapon lifetime: {}", (*weapon_result)->lifetime);
+                std::println("Weapon cooldown: {}", (*weapon_result)->cooldown);
+            }
+            std::println("Weapon coords: {}, {}", weapon.x, weapon.y);
+        }
+        for (auto engine : ship_data->engines) {
+            std::println("Engine type: {}", engine.engine_type);
+            auto engine_result = m_asset_manager.get_engine(engine.engine_type);
+            if (!engine_result) { std::println("Ruh roh!"); }
+            else {
+                std::println("Engine texture: {}", (*engine_result)->texture);
+            }
+            std::println("Engine coords: {}, {}", engine.x, engine.y);
+        }
+    }
+    std::println("~~~~~~~");
+
+    // PLAYER
+    spawn_player_ship(
+        m_registry,
+        m_asset_manager,
+        "example",
+        raylib::Vector2{200.0, 200.0}
+    );
+}
+
+void Game::update(float dt) {
+    update_weapon_timers(m_registry, dt);
+    update_bullet_timers(m_registry, dt);
+    player_movement(m_registry, m_asset_manager, dt);
+    update_physics_transforms(m_registry, dt);
+    update_local_transforms(m_registry);
+    update_background_position(m_registry);
+    engine_visibility(m_registry);
+    mark_bullets_for_despawn(m_registry);
+    camera_to_player(m_registry, m_camera);
+    despawn_entities(m_registry);
+}
+
+void Game::render() {
+    m_window.BeginDrawing();
+        m_window.ClearBackground(raylib::Color::Black());
+
+        m_camera.BeginMode();
+            render_sprites(m_registry);
+        m_camera.EndMode();
+
+    m_window.EndDrawing();
+}
