@@ -24,6 +24,11 @@ EngineData::EngineData(const json& j) {
     texture = j.value("texture", "");
 }
 
+EngineData::EngineData(const pugi::xml_document& d) {
+    auto root = d.child("EngineData");
+    texture = root.child("texture").text().as_string("");
+}
+
 ShipData::ShipData(const json& j) {
     texture = j.value("texture", "");
     for (const auto& item : j["weapons"]) {

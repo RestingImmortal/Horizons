@@ -30,6 +30,7 @@ struct EngineData {
     std::string texture;
 
     explicit EngineData(const json& j);
+    explicit EngineData(const pugi::xml_document& d);
 };
 
 struct ShipEngineData {
