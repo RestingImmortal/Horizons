@@ -89,13 +89,13 @@ private:
 
     bool is_texture_file(const std::filesystem::directory_entry& entry);
 
-    std::string get_ship_name(const std::filesystem::directory_entry& entry);
+    static std::string get_ship_name(const std::filesystem::directory_entry& entry);
 
-    std::string get_weapon_name(const std::filesystem::directory_entry& entry);
+    static std::string get_weapon_name(const std::filesystem::directory_entry& entry);
 
-    std::string get_engine_name(const std::filesystem::directory_entry& entry);
+    static std::string get_engine_name(const std::filesystem::directory_entry& entry);
 
-    std::string get_texture_name(const std::filesystem::directory_entry& entry);
+    static std::string get_texture_name(const std::filesystem::directory_entry& entry);
 
     void unload_all();
 
