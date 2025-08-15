@@ -9,6 +9,9 @@ on:
       - 'CMakeLists.txt'
       - '.github/workflows/continuous-build.yml'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build (${{ matrix.os }})
