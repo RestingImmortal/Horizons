@@ -48,7 +48,7 @@ jobs:
           mkdir package
           # Copy executables
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            cp game.exe package/
+            cp Release/game.exe package/
           else
             cp game package/
           fi
@@ -57,7 +57,7 @@ jobs:
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             7z a ../${{ runner.os }}.zip .
           else
-            tar czf ../${{ runner.os }}.tar.gz .
+            zip -r ../${{ runner.os }}.zip .
           fi
 
       - name: Upload Artifact
