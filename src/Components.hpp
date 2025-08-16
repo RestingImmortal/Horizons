@@ -14,8 +14,8 @@ namespace Components {
     struct Background {};
 
     struct Bullet {
-        float damage;
-        float lifetime;
+        float damage = 0.0;
+        float lifetime = 0.0;
         Timer despawn_timer;
     };
 
@@ -65,8 +65,8 @@ namespace Components {
     };
 
     struct Weapon {
-        Weapon() {}
-        Weapon(std::string key, AssetManager& asset_manager);
+        Weapon() = default;
+        Weapon(std::string key, const AssetManager& asset_manager);
 
         std::string munition;
         float damage = 0.0f;

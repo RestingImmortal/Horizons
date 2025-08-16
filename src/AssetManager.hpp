@@ -75,19 +75,19 @@ private:
     std::vector<raylib::TextureUnmanaged> m_textures;
     std::unordered_map<std::string, size_t> m_texture_map;
 
-    bool is_xml(const std::filesystem::directory_entry& entry);
+    static bool is_xml(const std::filesystem::directory_entry& entry);
 
-    bool is_json(const std::filesystem::directory_entry& entry);
+    static bool is_json(const std::filesystem::directory_entry& entry);
 
-    bool is_png(const std::filesystem::directory_entry& entry);
+    static bool is_png(const std::filesystem::directory_entry& entry);
 
-    bool is_ship_file(const std::filesystem::directory_entry& entry);
+    static bool is_ship_file(const std::filesystem::directory_entry& entry);
 
-    bool is_weapon_file(const std::filesystem::directory_entry& entry);
+    static bool is_weapon_file(const std::filesystem::directory_entry& entry);
 
-    bool is_engine_file(const std::filesystem::directory_entry& entry);
+    static bool is_engine_file(const std::filesystem::directory_entry& entry);
 
-    bool is_texture_file(const std::filesystem::directory_entry& entry);
+    static bool is_texture_file(const std::filesystem::directory_entry& entry);
 
     static std::string get_ship_name(const std::filesystem::directory_entry& entry);
 

@@ -13,7 +13,7 @@ WeaponData::WeaponData(const json& j) {
 }
 
 WeaponData::WeaponData(const pugi::xml_document& d) {
-    auto root = d.child("WeaponData");
+    const auto root = d.child("WeaponData");
     munition = root.child("munition").text().as_string("");
     damage   = root.child("damage").text().as_float(0.0f);
     lifetime = root.child("lifetime").text().as_float(0.0f);
@@ -25,7 +25,7 @@ EngineData::EngineData(const json& j) {
 }
 
 EngineData::EngineData(const pugi::xml_document& d) {
-    auto root = d.child("EngineData");
+    const auto root = d.child("EngineData");
     texture = root.child("texture").text().as_string("");
 }
 
@@ -47,7 +47,7 @@ ShipData::ShipData(const json& j) {
 }
 
 ShipData::ShipData(const pugi::xml_document& d) {
-    auto root = d.child("ShipData");
+    const auto root = d.child("ShipData");
     texture = root.child("texture").text().as_string("");
     for (pugi::xml_node node : root.children("weapons")) {
         weapons.push_back({
@@ -95,9 +95,9 @@ void AssetManager::load_assets() {
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
-                pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
 
-                if (!result) {
+                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result) {
                     std::println("XML [{}] parsed with errors", entry.path().string());
                     std::println("Error: {}", result.description());
                     continue;
@@ -120,9 +120,9 @@ void AssetManager::load_assets() {
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
-                pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
 
-                if (!result) {
+                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result) {
                     std::println("XML [{}] parsed with errors", entry.path().string());
                     std::println("Error: {}", result.description());
                     continue;
@@ -142,7 +142,7 @@ void AssetManager::load_assets() {
             }
         } else if (is_texture_file(entry)) {
             std::string name = get_texture_name(entry);
-            m_textures.push_back(raylib::TextureUnmanaged(entry.path().string()));
+            m_textures.emplace_back(entry.path().string());
             m_texture_map[name] = m_textures.size() - 1;
             std::println("Loaded Texture: {}", name);
         }
@@ -150,28 +150,28 @@ void AssetManager::load_assets() {
 }
 
 std::expected<const ShipData*, std::string> AssetManager::get_ship(const std::string& name) const {
-    if (auto it = m_ship_assets.find(name); it != m_ship_assets.end()) {
+    if (const auto it = m_ship_assets.find(name); it != m_ship_assets.end()) {
         return &it->second;
     }
     return std::unexpected("Ship '" + name + "' not found");
 }
 
 std::expected<const WeaponData*, std::string> AssetManager::get_weapon(const std::string& name) const {
-    if (auto it = m_weapon_assets.find(name); it != m_weapon_assets.end()) {
+    if (const auto it = m_weapon_assets.find(name); it != m_weapon_assets.end()) {
         return &it->second;
     }
     return std::unexpected("Weapon '" + name + "' not found");
 }
 
 std::expected<const EngineData*, std::string> AssetManager::get_engine(const std::string& name) const {
-    if (auto it = m_engine_assets.find(name); it != m_engine_assets.end()) {
+    if (const auto it = m_engine_assets.find(name); it != m_engine_assets.end()) {
         return &it->second;
     }
     return std::unexpected("Engine '" + name + "' not found");
 }
 
 raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
-    if (auto it = m_texture_map.find(name); it != m_texture_map.end()) {
+    if (const auto it = m_texture_map.find(name); it != m_texture_map.end()) {
         return m_textures[it->second];
     }
     std::println("Error getting texture {}", name);
@@ -242,8 +242,8 @@ void AssetManager::unload_all() {
 
 raylib::TextureUnmanaged& AssetManager::get_error_texture() {
     static raylib::TextureUnmanaged error_texture = []{
-        Image img = GenImageColor(128, 128, MAGENTA);
-        raylib::TextureUnmanaged tex = LoadTextureFromImage(img);
+        const Image img = GenImageColor(128, 128, MAGENTA);
+        const raylib::TextureUnmanaged tex = LoadTextureFromImage(img);
         UnloadImage(img);
         return tex;
     }();

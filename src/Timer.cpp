@@ -9,12 +9,12 @@ void Timer::start() {
     m_active = true;
 }
 
-void Timer::start(float new_duration) {
+void Timer::start(const float new_duration) {
     m_duration = new_duration;
     start();
 }
 
-void Timer::update(float delta) {
+void Timer::update(const float delta) {
     if (!m_active) return;
     m_elapsed += delta;
 }

@@ -5,7 +5,7 @@
 class Timer {
 public:
     Timer() : m_duration(0.0f) {}
-    explicit Timer(float seconds) : m_duration(seconds) {}
+    explicit Timer(const float seconds) : m_duration(seconds) {}
 
     void start();
 

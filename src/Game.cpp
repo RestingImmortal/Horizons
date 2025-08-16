@@ -12,7 +12,7 @@ void Game::run() {
     init();
 
     while (!m_window.ShouldClose()) {
-        float dt = m_window.GetFrameTime();
+        const float dt = m_window.GetFrameTime();
         update(dt);
         render();
     }
@@ -26,7 +26,7 @@ void Game::init() {
     m_asset_manager.load_assets();
 
     // RECTANGLEN'T
-    auto rect = m_registry.create();
+    const auto rect = m_registry.create();
     m_registry.emplace<Components::Transform>(rect,
         raylib::Vector2{100, 100},
         raylib::Vector2{50, 50}
@@ -37,7 +37,7 @@ void Game::init() {
     m_registry.emplace<Components::RenderOrder>(rect, 0);
 
     // BACKGROUND
-    auto background = m_registry.create();
+    const auto background = m_registry.create();
     m_registry.emplace<Components::Background>(background);
     m_registry.emplace<Components::Transform>(background,
         raylib::Vector2{200.0, 200.0},
@@ -49,16 +49,16 @@ void Game::init() {
     m_registry.emplace<Components::RenderOrder>(background, -1000);
 
     // Debug printing
-    auto ship = m_asset_manager.get_ship("example");
+    const auto ship = m_asset_manager.get_ship("example");
     std::println("~~~~~~~\nExample ship:");
     if (!ship) { std::println("Ruh roh!"); }
     else {
-        auto ship_data = *ship;
+        const auto ship_data = *ship;
         std::println("Texture: {}", ship_data->texture);
         for (auto weapon : ship_data->weapons) {
             std::println("Weapon type: {}", weapon.weapon_type);
-            auto weapon_result = m_asset_manager.get_weapon(weapon.weapon_type);
-            if (!weapon_result) { std::println("Ruh roh!"); }
+            if (auto weapon_result = m_asset_manager.get_weapon(weapon.weapon_type);
+                !weapon_result) { std::println("Ruh roh!"); }
             else {
                 std::println("Weapon munition: {}", (*weapon_result)->munition);
                 std::println("Weapon damage: {}", (*weapon_result)->damage);
@@ -69,8 +69,8 @@ void Game::init() {
         }
         for (auto engine : ship_data->engines) {
             std::println("Engine type: {}", engine.engine_type);
-            auto engine_result = m_asset_manager.get_engine(engine.engine_type);
-            if (!engine_result) { std::println("Ruh roh!"); }
+            if (auto engine_result = m_asset_manager.get_engine(engine.engine_type);
+                !engine_result) { std::println("Ruh roh!"); }
             else {
                 std::println("Engine texture: {}", (*engine_result)->texture);
             }
@@ -88,7 +88,7 @@ void Game::init() {
     );
 }
 
-void Game::update(float dt) {
+void Game::update(const float dt) {
     update_weapon_timers(m_registry, dt);
     update_bullet_timers(m_registry, dt);
     player_movement(m_registry, m_asset_manager, dt);

@@ -12,7 +12,7 @@
 #include "Timer.hpp"
 
 void camera_to_player(entt::registry& registry, raylib::Camera2D& camera) {
-    auto view = registry.view<Components::Transform, Components::Player>();
+    const auto view = registry.view<Components::Transform, Components::Player>();
     view.each([&camera](const auto& transform) {
         camera.SetOffset(raylib::Vector2{GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f});
         camera.SetTarget(transform.position);
@@ -20,7 +20,7 @@ void camera_to_player(entt::registry& registry, raylib::Camera2D& camera) {
 }
 
 void despawn_entities(entt::registry &registry) {
-    auto view = registry.view<Components::DespawnMarker>();
+    const auto view = registry.view<Components::DespawnMarker>();
     std::vector<entt::entity> entities_to_destroy;
 
     for (auto entity : view) {
@@ -31,9 +31,9 @@ void despawn_entities(entt::registry &registry) {
 }
 
 void engine_visibility(entt::registry &registry) {
-    for (auto entity : registry.view<Components::Engine, Components::Parent>()) {
-        auto parent = registry.get<Components::Parent>(entity).parent;
-        bool thrusting = registry.any_of<Components::Thrusting>(parent)
+    for (const auto entity : registry.view<Components::Engine, Components::Parent>()) {
+        const auto parent = registry.get<Components::Parent>(entity).parent;
+        const bool thrusting = registry.any_of<Components::Thrusting>(parent)
                        && registry.get<Components::Thrusting>(parent).active;
         
         if (!thrusting) {
@@ -45,24 +45,23 @@ void engine_visibility(entt::registry &registry) {
 }
 
 void mark_bullets_for_despawn(entt::registry &registry) {
-    auto view = registry.view<Components::Bullet>();
-    for (auto entity : view) {
-        auto& bullet = registry.get<Components::Bullet>(entity);
-
-        if (bullet.despawn_timer.is_done()) {
+    for (const auto view = registry.view<Components::Bullet>();
+        const auto entity : view) {
+        if (auto& bullet = registry.get<Components::Bullet>(entity);
+            bullet.despawn_timer.is_done()) {
             registry.emplace<Components::DespawnMarker>(entity);
         }
     }
 }
 
-void player_movement(entt::registry& registry, AssetManager& asset_manager, float dt) {
-    auto view = registry.view<Components::Transform, Components::Physics, Components::Thrusting, Components::Player>();
-    for (auto entity : view) {
+void player_movement(entt::registry& registry, AssetManager& asset_manager, const float dt) {
+    for (const auto view = registry.view<Components::Transform, Components::Physics, Components::Thrusting, Components::Player>();
+        const auto entity : view) {
         auto& transform = view.get<Components::Transform>(entity);
         auto& physics = view.get<Components::Physics>(entity);
         auto& thrusting = view.get<Components::Thrusting>(entity);
 
-        float rotation_speed = 180.0f;
+        const float rotation_speed = 180.0f;
         if (IsKeyDown(KEY_RIGHT)) {
             transform.rotation += rotation_speed * dt;
         }
@@ -79,8 +78,8 @@ void player_movement(entt::registry& registry, AssetManager& asset_manager, floa
         }
 
         if (IsKeyDown(KEY_UP)) {
-            float angle_radians = transform.rotation * DEG2RAD;
-            raylib::Vector2 thrust = {
+            const float angle_radians = transform.rotation * DEG2RAD;
+            const raylib::Vector2 thrust = {
                 sin(angle_radians) * physics.acceleration * dt,
                 -cos(angle_radians) * physics.acceleration * dt
             };
@@ -88,7 +87,7 @@ void player_movement(entt::registry& registry, AssetManager& asset_manager, floa
             physics.velocity += thrust;
 
             // Clamp speed to physics.max_speed
-            float speed_sq = physics.velocity.LengthSqr();
+            const float speed_sq = physics.velocity.LengthSqr();
             float max_speed_sq = physics.max_speed * physics.max_speed;
 
             if (speed_sq > max_speed_sq) {
@@ -101,8 +100,8 @@ void player_movement(entt::registry& registry, AssetManager& asset_manager, floa
         }
 
         if (IsKeyDown(KEY_TAB)) {
-            auto weapons = registry.view<Components::Weapon, Components::Transform, Components::PlayerWeapon>();
-            for (auto& weapon_entity : weapons) {
+            for (auto weapons = registry.view<Components::Weapon, Components::Transform, Components::PlayerWeapon>();
+                auto& weapon_entity : weapons) {
                 auto& weapon = weapons.get<Components::Weapon>(weapon_entity);
                 auto&weapon_transform = weapons.get<Components::Transform>(weapon_entity);
 
@@ -116,7 +115,7 @@ void player_movement(entt::registry& registry, AssetManager& asset_manager, floa
 }
 
 void render_sprites(entt::registry& registry) {
-    auto view = registry.view<Components::Transform, Components::Renderable, Components::RenderOrder>(entt::exclude<Components::ShouldNotRender>);
+    const auto view = registry.view<Components::Transform, Components::Renderable, Components::RenderOrder>(entt::exclude<Components::ShouldNotRender>);
 
     std::vector<entt::entity> sorted_entities;
 
@@ -124,26 +123,26 @@ void render_sprites(entt::registry& registry) {
         sorted_entities.push_back(entity);
     }
 
-    std::sort(sorted_entities.begin(), sorted_entities.end(),
-        [&registry](entt::entity a, entt::entity b) {
-            return registry.get<Components::RenderOrder>(a).layer < registry.get<Components::RenderOrder>(b).layer;
-        }
+    std::ranges::sort(sorted_entities,
+                      [&registry](const entt::entity a, const entt::entity b) {
+                          return registry.get<Components::RenderOrder>(a).layer < registry.get<Components::RenderOrder>(b).layer;
+                      }
     );
 
-    for (auto entity : sorted_entities) {
+    for (const auto entity : sorted_entities) {
         const auto& [transform, renderable] = view.get<Components::Transform, Components::Renderable>(entity);
 
-        raylib::Rectangle source_rec = {
+        const raylib::Rectangle source_rec = {
             0, 0,
             static_cast<float>(renderable.texture.width),
             static_cast<float>(renderable.texture.height)
         };
-         raylib::Rectangle dest_rec = {
+         const raylib::Rectangle dest_rec = {
             transform.position.x, transform.position.y,
             //transform.size.x, transform.size.y
             static_cast<float>(renderable.texture.width), static_cast<float>(renderable.texture.height)
         };
-        raylib::Vector2 origin = {renderable.texture.width/2.0f, renderable.texture.height/2.0f};
+        const raylib::Vector2 origin = {renderable.texture.width/2.0f, renderable.texture.height/2.0f};
         renderable.texture.Draw(
             source_rec,
             dest_rec,
@@ -158,18 +157,18 @@ entt::entity spawn_bullet(
     entt::registry& registry,
     AssetManager& asset_manager,
     Components::Transform& transform,
-    Components::Physics& physics,
-    Components::Weapon weapon
+    const Components::Physics& physics,
+    const Components::Weapon& weapon
 ) {
-    entt::entity bullet = registry.create();
+    const entt::entity bullet = registry.create();
 
-    float rotation_rad = transform.rotation * DEG2RAD;
-    raylib::Vector2 direction = {
+    const float rotation_rad = transform.rotation * DEG2RAD;
+    const raylib::Vector2 direction = {
         std::sin(rotation_rad),
         -std::cos(rotation_rad)
     };
 
-    raylib::Vector2 bullet_velocity = physics.velocity + (direction * weapon.shot_speed);
+    const raylib::Vector2 bullet_velocity = physics.velocity + (direction * weapon.shot_speed);
 
     Components::Physics bullet_physics = {weapon.shot_speed, 2'000'000, bullet_velocity};
 
@@ -203,8 +202,8 @@ entt::entity spawn_engine(
     raylib::Vector2 relative_offset,
     entt::entity parent_ship
 ) {
-    auto entity = registry.create();
-    auto engine = asset_manager.get_engine(key);
+    const auto entity = registry.create();
+    const auto engine = asset_manager.get_engine(key);
 
     registry.emplace<Components::Engine>(entity);
 
@@ -237,7 +236,7 @@ entt::entity spawn_player_ship(
     const std::string& key,
     raylib::Vector2 position
 ) {
-    auto entity = registry.create();
+    const auto entity = registry.create();
     auto ship = asset_manager.get_ship(key);
 
     registry.emplace<Components::Player>(entity);
@@ -260,7 +259,7 @@ entt::entity spawn_player_ship(
     if (!ship) {
         std::println("Ship not found for: {}, no weapons will be spawned", key);
     } else {
-        for (auto weapon : (*ship)->weapons) {
+        for (const auto& weapon : (*ship)->weapons) {
             spawn_player_weapon(
                 registry,
                 asset_manager,
@@ -274,7 +273,7 @@ entt::entity spawn_player_ship(
     if (!ship) {
         std::println("Ship not found for: {}, no engines will be spawned", key);
     } else {
-        for (auto engine : (*ship)->engines) {
+        for (const auto& engine : (*ship)->engines) {
             spawn_engine(
                 registry,
                 asset_manager,
@@ -292,10 +291,10 @@ entt::entity spawn_player_weapon(
     entt::registry& registry,
     AssetManager& asset_manager,
     const std::string& key,
-    raylib::Vector2 relative_offset,
-    entt::entity parent_ship
+    const raylib::Vector2 relative_offset,
+    const entt::entity parent_ship
 ) {
-    auto weapon = spawn_weapon(registry, asset_manager, key, relative_offset, parent_ship);
+    const auto weapon = spawn_weapon(registry, asset_manager, key, relative_offset, parent_ship);
     registry.emplace<Components::PlayerWeapon>(weapon);
     return weapon;
 }
@@ -306,7 +305,7 @@ entt::entity spawn_ship(
     const std::string& key,
     raylib::Vector2 position
 ) {
-    entt::entity entity = registry.create();
+    const entt::entity entity = registry.create();
     auto ship = asset_manager.get_ship(key);
 
     registry.emplace<Components::Transform>(entity, position);
@@ -327,7 +326,7 @@ entt::entity spawn_ship(
     if (!ship) {
         std::println("Ship not found for: {}, no weapons will be spawned.", key);
     } else {
-        for (auto weapon : (*ship)->weapons) {
+        for (const auto& weapon : (*ship)->weapons) {
             spawn_weapon(
                 registry,
                 asset_manager,
@@ -348,7 +347,7 @@ entt::entity spawn_weapon(
     raylib::Vector2 relative_offset,
     entt::entity parent_ship
 ) {
-    auto weapon_entity = registry.create();
+    const auto weapon_entity = registry.create();
 
     registry.emplace<Components::Transform>(weapon_entity,
         raylib::Vector2{0.0, 0.0}
@@ -370,12 +369,12 @@ entt::entity spawn_weapon(
 }
 
 void update_background_position(entt::registry &registry) {
-    auto player_view = registry.view<Components::Transform, Components::Player>();
-    for (auto player_entity : player_view) {
-        auto& player_transform = player_view.get<Components::Transform>(player_entity);
-        
-        auto background_view = registry.view<Components::Transform, Components::Background>();
-        for (auto background_entity : background_view) {
+    for (const auto player_view = registry.view<Components::Transform, Components::Player>();
+        const auto player_entity : player_view) {
+        const auto& player_transform = player_view.get<Components::Transform>(player_entity);
+
+        for (auto background_view = registry.view<Components::Transform, Components::Background>();
+            const auto background_entity : background_view) {
             auto& background_transform = background_view.get<Components::Transform>(background_entity);
 
             background_transform.position = player_transform.position;
@@ -383,9 +382,9 @@ void update_background_position(entt::registry &registry) {
     }
 }
 
-void update_bullet_timers(entt::registry &registry, float dt) {
-    auto view = registry.view<Components::Bullet>();
-    for (auto entity : view) {
+void update_bullet_timers(entt::registry &registry, const float dt) {
+    for (const auto view = registry.view<Components::Bullet>();
+        const auto entity : view) {
         auto& bullet = view.get<Components::Bullet>(entity);
 
         bullet.despawn_timer.update(dt);
@@ -393,8 +392,8 @@ void update_bullet_timers(entt::registry &registry, float dt) {
 }
 
 void update_local_transforms(entt::registry& registry) {
-    auto view = registry.view<Components::Transform, Components::RelativeTransform, Components::Parent>();
-    for (auto entity : view) {
+    for (const auto view = registry.view<Components::Transform, Components::RelativeTransform, Components::Parent>();
+         const auto entity: view) {
         auto& transform = view.get<Components::Transform>(entity);
         const auto& relative = view.get<Components::RelativeTransform>(entity);
         const auto& parent_transform = registry.get<Components::Transform>(view.get<Components::Parent>(entity).parent);
@@ -406,15 +405,15 @@ void update_local_transforms(entt::registry& registry) {
 }
 
 void update_physics_transforms(entt::registry& registry, float dt) {
-    auto view = registry.view<Components::Transform, const Components::Physics>();
+    const auto view = registry.view<Components::Transform, const Components::Physics>();
     view.each([&dt](auto& transform, const auto& physics) {
         transform.position += physics.velocity * dt;
     });
 }
 
 void update_weapon_timers(entt::registry& registry, float dt) {
-    auto view = registry.view<Components::Weapon>();
-    for (auto& entity : view) {
+    for (const auto view = registry.view<Components::Weapon>();
+        auto& entity : view) {
         auto& weapon = view.get<Components::Weapon>(entity);
 
         weapon.fire_timer.update(dt);
