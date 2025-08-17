@@ -2,12 +2,15 @@
 
 #include <raylib-cpp.hpp>
 
+#include "ConfigManager.hpp"
 #include "Game.hpp"
 
 int main() {
     SetTraceLogLevel(LOG_WARNING);
 
-    Game game(800, 600, "Atherium: Dominion INDEV");
+    const ConfigManager configs;
+
+    Game game(800, 600, configs.title);
     game.run();
     return 0;
 }

@@ -20,6 +20,8 @@ Currently, the engine expects a few things in order to run appropriately, as the
 The required files can be found in the source for [Game::Init](src/Game.cpp), and you can make the appropriate files following the structure expected by the [asset manager](src/AssetManager.cpp).
 For this, you can use either json or xml, depending on your preference. Both are currently supported.
 
+The engine also expects a file called META.json next to the executable. This expects a title field currently.
+
 ## Compilation Instructions
 
 ### Prerequisites

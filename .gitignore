@@ -8,3 +8,4 @@ game.pdb
 game
 *.zip
 /cmake-build-debug
+META.json
