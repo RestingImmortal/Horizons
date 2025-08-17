@@ -79,7 +79,17 @@ void AssetManager::load_assets() {
             std::string key = get_engine_name(entry);
 
             if (is_xml(entry)) {
-                // do nothing
+                pugi::xml_document doc;
+
+                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result) {
+                    std::println("XML [{}] parsed with errors", entry.path().string());
+                    std::println("Error: {}", result.description());
+                    continue;
+                }
+
+                m_engine_assets.emplace(key, EngineData(doc));
+                std::println("Loaded Engine: {}", key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
