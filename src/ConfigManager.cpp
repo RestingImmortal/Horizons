@@ -1,3 +1,5 @@
+// Copyright 2025 RestingImmortal
+
 #include "ConfigManager.hpp"
 
 #include <fstream>

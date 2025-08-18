@@ -1,3 +1,5 @@
+// Copyright 2025 RestingImmortal
+
 #pragma once
 
 #include <nlohmann/json.hpp>
