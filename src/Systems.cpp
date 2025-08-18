@@ -62,8 +62,14 @@ void player_movement(
     AssetManager& asset_manager,
     const float dt
 ) {
-    for (const auto view = registry.view<Components::Transform, Components::Physics, Components::Thrusting, Components::Player>();
-        const auto entity : view) {
+    for (
+        const auto view = registry.view<
+            Components::Transform,
+            Components::Physics,
+            Components::Thrusting,
+            Components::Player>();
+        const auto entity : view
+        ) {
         auto& transform = view.get<Components::Transform>(entity);
         auto& physics = view.get<Components::Physics>(entity);
         auto& thrusting = view.get<Components::Thrusting>(entity);
@@ -107,8 +113,13 @@ void player_movement(
         }
 
         if (IsKeyDown(KEY_TAB)) {
-            for (auto weapons = registry.view<Components::Weapon, Components::Transform, Components::PlayerWeapon>();
-                auto& weapon_entity : weapons) {
+            for (
+                auto weapons = registry.view<
+                    Components::Weapon,
+                    Components::Transform,
+                    Components::PlayerWeapon>();
+                auto& weapon_entity : weapons
+                ) {
                 auto& weapon = weapons.get<Components::Weapon>(weapon_entity);
                 auto&weapon_transform = weapons.get<Components::Transform>(weapon_entity);
 
@@ -122,7 +133,11 @@ void player_movement(
 }
 
 void render_sprites(entt::registry& registry) {
-    const auto view = registry.view<Components::Transform, Components::Renderable, Components::RenderOrder>(entt::exclude<Components::ShouldNotRender>);
+    const auto view = registry.view<
+        Components::Transform,
+        Components::Renderable,
+        Components::RenderOrder>
+        (entt::exclude<Components::ShouldNotRender>);
 
     std::vector<entt::entity> sorted_entities;
 
