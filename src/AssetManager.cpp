@@ -22,11 +22,13 @@ WeaponData::WeaponData(const pugi::xml_document& d) {
 
 EngineData::EngineData(const json& j) {
     texture = j.value("texture", "");
+    thrust  = j.value("thrust", 20.0f);
 }
 
 EngineData::EngineData(const pugi::xml_document& d) {
     const auto root = d.child("EngineData");
     texture = root.child("texture").text().as_string("");
+    thrust  = root.child("thrust").text().as_float(20.0f);
 }
 
 ShipData::ShipData(const json& j) {

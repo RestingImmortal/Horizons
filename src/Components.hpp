@@ -21,7 +21,9 @@ namespace Components {
 
     struct DespawnMarker {};
 
-    struct Engine {};
+    struct Engine {
+        float thrust = 20.0f;
+    };
 
     struct Parent {
         entt::entity parent;

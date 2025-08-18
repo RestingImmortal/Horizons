@@ -28,6 +28,7 @@ struct WeaponData {
 
 struct EngineData {
     std::string texture;
+    float thrust;
 
     explicit EngineData(const json& j);
     explicit EngineData(const pugi::xml_document& d);
