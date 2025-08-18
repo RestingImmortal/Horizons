@@ -11,7 +11,10 @@
 #include "Components.hpp"
 #include "Timer.hpp"
 
-void camera_to_player(entt::registry& registry, raylib::Camera2D& camera) {
+void camera_to_player(
+    entt::registry& registry,
+    raylib::Camera2D& camera
+) {
     const auto view = registry.view<Components::Transform, Components::Player>();
     view.each([&camera](const auto& transform) {
         camera.SetOffset(raylib::Vector2{GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f});
@@ -54,7 +57,11 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
-void player_movement(entt::registry& registry, AssetManager& asset_manager, const float dt) {
+void player_movement(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const float dt
+) {
     for (const auto view = registry.view<Components::Transform, Components::Physics, Components::Thrusting, Components::Player>();
         const auto entity : view) {
         auto& transform = view.get<Components::Transform>(entity);
@@ -399,7 +406,10 @@ void update_background_position(entt::registry &registry) {
     }
 }
 
-void update_bullet_timers(entt::registry &registry, const float dt) {
+void update_bullet_timers(
+    entt::registry &registry,
+    const float dt
+) {
     for (const auto view = registry.view<Components::Bullet>();
         const auto entity : view) {
         auto& bullet = view.get<Components::Bullet>(entity);
@@ -421,14 +431,20 @@ void update_local_transforms(entt::registry& registry) {
     }
 }
 
-void update_physics_transforms(entt::registry& registry, float dt) {
+void update_physics_transforms(
+    entt::registry& registry,
+    float dt
+) {
     const auto view = registry.view<Components::Transform, const Components::Physics>();
     view.each([&dt](auto& transform, const auto& physics) {
         transform.position += physics.velocity * dt;
     });
 }
 
-void update_weapon_timers(entt::registry& registry, float dt) {
+void update_weapon_timers(
+    entt::registry& registry,
+    float dt
+) {
     for (const auto view = registry.view<Components::Weapon>();
         auto& entity : view) {
         auto& weapon = view.get<Components::Weapon>(entity);
