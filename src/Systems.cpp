@@ -205,7 +205,11 @@ entt::entity spawn_engine(
     const auto entity = registry.create();
     const auto engine = asset_manager.get_engine(key);
 
-    registry.emplace<Components::Engine>(entity);
+    if (!engine) {
+        std::println("Engine not found for: {}, no engine component will be added", key);
+    } else {
+        registry.emplace<Components::Engine>(entity, (*engine)->thrust);
+    }
 
     registry.emplace<Components::Transform>(entity,
         raylib::Vector2{0.0, 0.0}
@@ -243,7 +247,7 @@ entt::entity spawn_player_ship(
 
     registry.emplace<Components::Transform>(entity, position);
 
-    registry.emplace<Components::Physics>(entity);
+    auto& ship_physics = registry.emplace<Components::Physics>(entity);
 
     registry.emplace<Components::Thrusting>(entity, false);
 
@@ -273,6 +277,7 @@ entt::entity spawn_player_ship(
     if (!ship) {
         std::println("Ship not found for: {}, no engines will be spawned", key);
     } else {
+        std::vector<float> engine_thrusts;
         for (const auto& engine : (*ship)->engines) {
             spawn_engine(
                 registry,
@@ -281,7 +286,19 @@ entt::entity spawn_player_ship(
                 raylib::Vector2{engine.x, engine.y},
                 entity
             );
+
+            if (auto engine_result = asset_manager.get_engine(engine.engine_type);
+                !engine_result) {
+                std::println("Couldn't find engine_type: {} while constructing ship: {}", engine.engine_type, key);
+            } else {
+                engine_thrusts.push_back((*engine_result)->thrust);
+            }
         }
+        float sum = 0.0f;
+        for (const auto& thrust : engine_thrusts) {
+            sum += thrust;
+        }
+        ship_physics.acceleration = sum;
     }
 
     return entity;

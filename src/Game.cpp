@@ -73,6 +73,7 @@ void Game::init() {
                 !engine_result) { std::println("Ruh roh!"); }
             else {
                 std::println("Engine texture: {}", (*engine_result)->texture);
+                std::println("Engine thrust: {}", (*engine_result)->thrust);
             }
             std::println("Engine coords: {}, {}", engine.x, engine.y);
         }
