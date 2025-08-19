@@ -352,20 +352,20 @@ entt::entity spawn_ship(
 
     registry.emplace<Components::Physics>(entity);
 
-    registry.emplace<Components::Thrusting>(entity, false);
-
-    auto& renderable = registry.emplace<Components::Renderable>(entity);
     if (!ship) {
         std::println("Error loading ship: {}", ship.error());
+        std::println("Minimal ship will be spawned. Consider resolving this issue.");
     } else {
+        // If the ship can't be found, there will be no texture found, and thus a renderable is useless
+        auto& renderable = registry.emplace<Components::Renderable>(entity);
         renderable.texture = asset_manager.get_texture((*ship)->texture);
-    }
 
-    registry.emplace<Components::RenderOrder>(entity, 0);
+        registry.emplace<Components::RenderOrder>(entity, 0);
 
-    if (!ship) {
-        std::println("Ship not found for: {}, no weapons will be spawned.", key);
-    } else {
+        // If the ship can't be found, there will be no engines found, and thus it doesn't need to bloat engine processing.
+        registry.emplace<Components::Thrusting>(entity, false);
+
+        // If the ship can't be found, there will be no weapons found, and thus engines shouldn't try to spawn unless the ship is present.
         for (const auto& weapon : (*ship)->weapons) {
             spawn_weapon(
                 registry,
