@@ -7,8 +7,10 @@ using namespace Components;
 
 Weapon::Weapon(std::string key, const AssetManager& asset_manager)
     : damage(0.0), lifetime(0.0), cooldown(2'000'000) {
-    if (const auto result = asset_manager.get_weapon(key);
-        !result) {
+    if (
+        const auto result = asset_manager.get_weapon(key);
+        !result
+    ) {
         std::println("Error constructing weapon '{}', constructing default.", key);
     } else {
         const auto data = *result;
