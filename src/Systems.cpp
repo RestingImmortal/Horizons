@@ -38,7 +38,7 @@ void engine_visibility(entt::registry &registry) {
         const auto parent = registry.get<Components::Parent>(entity).parent;
         const bool thrusting = registry.any_of<Components::Thrusting>(parent)
                        && registry.get<Components::Thrusting>(parent).active;
-        
+
         if (!thrusting) {
             registry.emplace_or_replace<Components::ShouldNotRender>(entity);
         } else if (registry.any_of<Components::ShouldNotRender>(entity)) {
@@ -48,8 +48,10 @@ void engine_visibility(entt::registry &registry) {
 }
 
 void mark_bullets_for_despawn(entt::registry &registry) {
-    for (const auto view = registry.view<Components::Bullet>();
-        const auto entity : view) {
+    for (
+        const auto view = registry.view<Components::Bullet>();
+        const auto entity : view
+    ) {
         if (auto& bullet = registry.get<Components::Bullet>(entity);
             bullet.despawn_timer.is_done()) {
             registry.emplace<Components::DespawnMarker>(entity);
@@ -69,7 +71,7 @@ void player_movement(
             Components::Thrusting,
             Components::Player>();
         const auto entity : view
-        ) {
+    ) {
         auto& transform = view.get<Components::Transform>(entity);
         auto& physics = view.get<Components::Physics>(entity);
         auto& thrusting = view.get<Components::Thrusting>(entity);
@@ -424,8 +426,10 @@ void update_bullet_timers(
     entt::registry &registry,
     const float dt
 ) {
-    for (const auto view = registry.view<Components::Bullet>();
-        const auto entity : view) {
+    for (
+        const auto view = registry.view<Components::Bullet>();
+        const auto entity : view
+    ) {
         auto& bullet = view.get<Components::Bullet>(entity);
 
         bullet.despawn_timer.update(dt);
@@ -433,8 +437,10 @@ void update_bullet_timers(
 }
 
 void update_local_transforms(entt::registry& registry) {
-    for (const auto view = registry.view<Components::Transform, Components::RelativeTransform, Components::Parent>();
-         const auto entity: view) {
+    for (
+        const auto view = registry.view<Components::Transform, Components::RelativeTransform, Components::Parent>();
+        const auto entity: view
+    ) {
         auto& transform = view.get<Components::Transform>(entity);
         const auto& relative = view.get<Components::RelativeTransform>(entity);
         const auto& parent_transform = registry.get<Components::Transform>(view.get<Components::Parent>(entity).parent);
