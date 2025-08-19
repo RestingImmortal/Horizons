@@ -461,8 +461,10 @@ void update_weapon_timers(
     entt::registry& registry,
     float dt
 ) {
-    for (const auto view = registry.view<Components::Weapon>();
-        auto& entity : view) {
+    for (
+        const auto view = registry.view<Components::Weapon>();
+        auto& entity : view
+    ) {
         auto& weapon = view.get<Components::Weapon>(entity);
 
         weapon.fire_timer.update(dt);
