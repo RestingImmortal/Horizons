@@ -278,7 +278,7 @@ entt::entity spawn_player_ship(
         std::println("Error loading ship: {}", ship.error());
         std::println("Minimal player ship will be spawned. Please consider resolving this issue.");
     } else {
-        // If the ship isn't found, no texutre will be found. Thus, don't give the entity a Renderable component.
+        // If the ship isn't found, no texture will be found. Thus, don't give the entity a Renderable component.
         auto& renderable = registry.emplace<Components::Renderable>(entity);
         renderable.texture = asset_manager.get_texture((*ship)->texture);
 
