@@ -34,6 +34,13 @@ void render_sprites(
     entt::registry& registry
 );
 
+entt::entity spawn_background(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key,
+    int layer
+);
+
 entt::entity spawn_bullet(
     entt::registry& registry,
     AssetManager& asset_manager,
@@ -48,6 +55,14 @@ entt::entity spawn_engine(
     const std::string& key,
     raylib::Vector2 relative_offset,
     entt::entity parent_ship
+);
+
+entt::entity spawn_object(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key,
+    raylib::Vector2 position,
+    int layer
 );
 
 entt::entity spawn_player_ship(

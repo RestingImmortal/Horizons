@@ -177,6 +177,27 @@ void render_sprites(entt::registry& registry) {
     }
 }
 
+entt::entity spawn_background(
+    entt::registry &registry,
+    AssetManager &asset_manager,
+    const std::string &key,
+    int layer
+) {
+    const entt::entity entity = registry.create();
+
+    registry.emplace<Components::Background>(entity);
+
+    registry.emplace<Components::Transform>(entity);
+
+    auto& bg_render = registry.emplace<Components::Renderable>(entity);
+    bg_render.texture = asset_manager.get_texture(key);
+
+    registry.emplace<Components::RenderOrder>(entity, layer);
+
+    return entity;
+}
+
+
 entt::entity spawn_bullet(
     entt::registry& registry,
     AssetManager& asset_manager,
@@ -255,6 +276,25 @@ entt::entity spawn_engine(
     registry.emplace<Components::RelativeTransform>(entity, relative_offset);
 
     registry.emplace<Components::Parent>(entity, parent_ship);
+
+    return entity;
+}
+
+entt::entity spawn_object(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key,
+    raylib::Vector2 position,
+    int layer
+) {
+    const entt::entity entity = registry.create();
+
+    registry.emplace<Components::Transform>(entity, position);
+
+    auto& object_renderable = registry.emplace<Components::Renderable>(entity);
+    object_renderable.texture = asset_manager.get_texture(key);
+
+    registry.emplace<Components::RenderOrder>(entity, layer);
 
     return entity;
 }

@@ -25,28 +25,22 @@ void Game::init() {
 
     m_asset_manager.load_assets();
 
-    // RECTANGLEN'T
-    const auto rect = m_registry.create();
-    m_registry.emplace<Components::Transform>(rect,
-        raylib::Vector2{100, 100},
-        raylib::Vector2{50, 50}
+    // Basic object
+    spawn_object(
+        m_registry,
+        m_asset_manager,
+        "hmmyes",
+        raylib::Vector2{100.0, 100.0},
+        0
     );
-    //m_registry.emplace<Components::Renderable>(rect, raylib::Color::Red());
-    auto& rectnt_renderable = m_registry.emplace<Components::Renderable>(rect);
-    rectnt_renderable.texture = m_asset_manager.get_texture("hmmyes");
-    m_registry.emplace<Components::RenderOrder>(rect, 0);
 
     // BACKGROUND
-    const auto background = m_registry.create();
-    m_registry.emplace<Components::Background>(background);
-    m_registry.emplace<Components::Transform>(background,
-        raylib::Vector2{200.0, 200.0},
-        raylib::Vector2{1920, 1080},
-        0.0f
+    spawn_background(
+        m_registry,
+        m_asset_manager,
+        "bg",
+        -1000
     );
-    auto& bg_render = m_registry.emplace<Components::Renderable>(background);
-    bg_render.texture = m_asset_manager.get_texture("bg");
-    m_registry.emplace<Components::RenderOrder>(background, -1000);
 
     // Debug printing
     const auto ship = m_asset_manager.get_ship("example");
