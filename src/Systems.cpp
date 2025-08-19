@@ -272,20 +272,17 @@ entt::entity spawn_player_ship(
 
     auto& ship_physics = registry.emplace<Components::Physics>(entity);
 
-    registry.emplace<Components::Thrusting>(entity, false);
-
-    auto& renderable = registry.emplace<Components::Renderable>(entity);
     if (!ship) {
         std::println("Error loading ship: {}", ship.error());
+        std::println("Minimal player ship will be spawned. Please consider resolving this issue.");
     } else {
+        // If the ship isn't found, no texutre will be found. Thus, don't give the entity a Renderable component.
+        auto& renderable = registry.emplace<Components::Renderable>(entity);
         renderable.texture = asset_manager.get_texture((*ship)->texture);
-    }
 
-    registry.emplace<Components::RenderOrder>(entity, 1000);
+        registry.emplace<Components::RenderOrder>(entity, 1000);
 
-    if (!ship) {
-        std::println("Ship not found for: {}, no weapons will be spawned", key);
-    } else {
+        // If the ship isn't found, there would be no weapons. Thus, only try spawning them when they might be present.
         for (const auto& weapon : (*ship)->weapons) {
             spawn_player_weapon(
                 registry,
@@ -295,11 +292,10 @@ entt::entity spawn_player_ship(
                 entity
             );
         }
-    }
 
-    if (!ship) {
-        std::println("Ship not found for: {}, no engines will be spawned", key);
-    } else {
+        // Only do engine stuff when there might be engines.
+        registry.emplace<Components::Thrusting>(entity, false);
+
         std::vector<float> engine_thrusts;
         for (const auto& engine : (*ship)->engines) {
             spawn_engine(
@@ -310,8 +306,10 @@ entt::entity spawn_player_ship(
                 entity
             );
 
-            if (auto engine_result = asset_manager.get_engine(engine.engine_type);
-                !engine_result) {
+            if (
+                auto engine_result = asset_manager.get_engine(engine.engine_type);
+                !engine_result
+            ) {
                 std::println("Couldn't find engine_type: {} while constructing ship: {}", engine.engine_type, key);
             } else {
                 engine_thrusts.push_back((*engine_result)->thrust);
