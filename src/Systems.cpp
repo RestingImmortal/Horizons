@@ -225,13 +225,26 @@ entt::entity spawn_engine(
     entt::entity parent_ship
 ) {
     const auto entity = registry.create();
-    const auto engine = asset_manager.get_engine(key);
 
-    if (!engine) {
-        std::println("Engine not found for: {}, no engine component will be added", key);
+    // Handle stuff that depends on a found engine
+    if (
+        const auto engine = asset_manager.get_engine(key);
+        !engine
+    ) {
+        std::println("Engine not found for: {}, minimal child will be spawned instead", key);
     } else {
         registry.emplace<Components::Engine>(entity, (*engine)->thrust);
+
+        auto& renderable = registry.emplace<Components::Renderable>(entity);
+        renderable.color = raylib::Color::White();
+        renderable.texture = asset_manager.get_texture((*engine)->texture);
+
+        registry.emplace<Components::RenderOrder>(entity, 999);
+
+        registry.emplace<Components::ShouldNotRender>(entity);
     }
+
+    // Do the rest of the stuff that can be done
 
     registry.emplace<Components::Transform>(entity,
         raylib::Vector2{0.0, 0.0}
@@ -240,18 +253,6 @@ entt::entity spawn_engine(
     registry.emplace<Components::RelativeTransform>(entity, relative_offset);
 
     registry.emplace<Components::Parent>(entity, parent_ship);
-    
-    if (!engine) {
-        std::println("Engine not found for: {}, no renderable will be produced", key);
-    } else {
-        auto& renderable = registry.emplace<Components::Renderable>(entity);
-        renderable.color = raylib::Color::White();
-        renderable.texture = asset_manager.get_texture((*engine)->texture);
-    }
-    
-    registry.emplace<Components::RenderOrder>(entity, 999);
-
-    registry.emplace<Components::ShouldNotRender>(entity);
 
     return entity;
 }
