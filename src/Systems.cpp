@@ -518,8 +518,10 @@ entt::entity spawn_weapon(
 }
 
 void update_background_position(entt::registry &registry) {
-    for (const auto player_view = registry.view<Components::Transform, Components::Player>();
-        const auto player_entity : player_view) {
+    for (
+        const auto player_view = registry.view<Components::Transform, Components::Player>();
+        const auto player_entity : player_view
+    ) {
         const auto& player_transform = player_view.get<Components::Transform>(player_entity);
 
         for (auto background_view = registry.view<Components::Transform, Components::Background>();
