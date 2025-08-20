@@ -20,6 +20,12 @@ void engine_visibility(
     entt::registry& registry
 );
 
+void load_map(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key
+);
+
 void mark_bullets_for_despawn(
     entt::registry& registry
 );

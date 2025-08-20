@@ -25,21 +25,10 @@ void Game::init() {
 
     m_asset_manager.load_assets();
 
-    // Basic object
-    spawn_object(
+    load_map(
         m_registry,
         m_asset_manager,
-        "hmmyes",
-        raylib::Vector2{100.0, 100.0},
-        0
-    );
-
-    // BACKGROUND
-    spawn_background(
-        m_registry,
-        m_asset_manager,
-        "bg",
-        -1000
+        "initial map"
     );
 
     // Debug printing

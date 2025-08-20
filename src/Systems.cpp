@@ -47,6 +47,50 @@ void engine_visibility(entt::registry &registry) {
     }
 }
 
+void load_map(
+    entt::registry &registry,
+    AssetManager &asset_manager,
+    const std::string &key
+) {
+    if (
+        auto map_result = asset_manager.get_map(key);
+        !map_result
+    ) {
+        std::println("Error loading map {}: {}", key, map_result.error());
+    } else {
+        const auto map_data = *map_result;
+
+        for (const auto& background : map_data->backgrounds) {
+            spawn_background(
+                registry,
+                asset_manager,
+                background.image,
+                background.layer
+            );
+        }
+
+        for (const auto& ship : map_data->ships) {
+            spawn_ship(
+                registry,
+                asset_manager,
+                ship.ship_type,
+                raylib::Vector2{ship.x, ship.y}
+            );
+        }
+
+        for (const auto& object : map_data->objects) {
+            spawn_object(
+                registry,
+                asset_manager,
+                object.texture,
+                raylib::Vector2{object.x, object.y},
+                object.layer
+            );
+        }
+    }
+}
+
+
 void mark_bullets_for_despawn(entt::registry &registry) {
     for (
         const auto view = registry.view<Components::Bullet>();
