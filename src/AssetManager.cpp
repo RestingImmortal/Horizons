@@ -58,6 +58,33 @@ ShipData::ShipData(const pugi::xml_document& d) {
             node.child("y").text().as_float()
         });
     }
+    // TODO: Apparently I forgot to add engine support here
+}
+
+MapData::MapData(const json& j) {
+    metadata = { j.at("meta").at("name").get<std::string>() };
+
+    for (const auto& item : j["backgrounds"]) {
+        backgrounds.push_back({
+            item.at("image").get<std::string>(),
+            item.at("layer").get<int>()
+        });
+    }
+    for (const auto& item : j["ships"]) {
+        ships.push_back({
+            item.at("type").get<std::string>(),
+            item.at("x").get<float>(),
+            item.at("y").get<float>()
+        });
+    }
+    for (const auto& item : j["objects"]) {
+        objects.push_back({
+            item.at("texture").get<std::string>(),
+            item.at("x").get<float>(),
+            item.at("y").get<float>(),
+            item.at("layer").get<int>()
+        });
+    }
 }
 
 // Public Methods
@@ -77,7 +104,22 @@ void AssetManager::load_assets() {
     }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(assets_dir)) {
-        if (is_engine_file(entry)) {
+        if (is_map_file(entry)) {
+            std::string map_name = get_map_name(entry);
+            if (is_xml(entry)) {
+                // TODO: Add XML support for reading maps
+            } else if (is_json(entry)) {
+                try {
+                    std::ifstream file(entry.path());
+                    json jsonData = json::parse(file);
+                    auto key = jsonData.at("meta").at("name").get<std::string>();
+                    m_map_assets.emplace(key, MapData(jsonData));
+                    std::println("Loaded Map {}: {}", map_name, key);
+                } catch (std::exception& e) {
+                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                }
+            }
+        } else if (is_engine_file(entry)) {
             std::string key = get_engine_name(entry);
 
             if (is_xml(entry)) {
@@ -222,6 +264,12 @@ bool AssetManager::is_engine_file(const std::filesystem::directory_entry& entry)
            entry.path().stem().extension() == ".engine";
 }
 
+bool AssetManager::is_map_file(const std::filesystem::directory_entry& entry) {
+    return entry.is_regular_file() &&
+           (is_xml(entry) || is_json(entry)) &&
+           entry.path().stem().extension() == ".map";
+}
+
 bool AssetManager::is_texture_file(const std::filesystem::directory_entry& entry) {
     return entry.is_regular_file() && is_png(entry);
 }
@@ -235,6 +283,10 @@ std::string AssetManager::get_weapon_name(const std::filesystem::directory_entry
 }
 
 std::string AssetManager::get_engine_name(const std::filesystem::directory_entry& entry) {
+    return entry.path().stem().stem().string();
+}
+
+std::string AssetManager::get_map_name(const std::filesystem::directory_entry &entry) {
     return entry.path().stem().stem().string();
 }
 
