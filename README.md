@@ -16,9 +16,9 @@ Horizons is an engine in active, early development with the goal of having thing
 ### How To Run
 
 The engine expects an `assets` directory in the folder alongside the executable.
-Currently, the engine expects a few things in order to run appropriately, as the initialization of games are not yet handled through data.
-The required files can be found in the source for [Game::Init](src/Game.cpp), and you can make the appropriate files following the structure expected by the [asset manager](src/AssetManager.cpp).
-For this, you can use either json or xml, depending on your preference. Both are currently supported.
+It expects (for now) a map with the declared meta/name of "initial map". The map also needs the backgrounds, ships, and objects sections.
+You can make the appropriate files following the structure expected by the [asset manager](src/AssetManager.cpp).
+For this, you can use either json or xml, depending on your preference. Both are currently supported. In practice, xml support lags behind slightly.
 
 The engine also expects a file called META.json next to the executable. This expects a title field currently.
 
