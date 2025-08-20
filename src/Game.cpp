@@ -25,11 +25,11 @@ void Game::init() {
 
     m_asset_manager.load_assets();
 
-    load_map(
-        m_registry,
-        m_asset_manager,
-        "initial map"
-    );
+        load_start(
+            m_registry,
+            m_asset_manager,
+            "Multi-start unsupported still. Harass Luna if this is limiting you"
+        );
 
     // Debug printing
     const auto ship = m_asset_manager.get_ship("example");

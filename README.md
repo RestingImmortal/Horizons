@@ -16,7 +16,9 @@ Horizons is an engine in active, early development with the goal of having thing
 ### How To Run
 
 The engine expects an `assets` directory in the folder alongside the executable.
-It expects (for now) a map with the declared meta/name of "initial map". The map also needs the backgrounds, ships, and objects sections.
+It expects a file.start.json, with a name of `Multi-start unsupported still. Harass Luna if this is limiting you` and an initial map field.
+This should point to a map with a declared meta/name of whatever you specify. The map needs the backgrounds, ships, and objects sections.
+
 You can make the appropriate files following the structure expected by the [asset manager](src/AssetManager.cpp).
 For this, you can use either json or xml, depending on your preference. Both are currently supported. In practice, xml support lags behind slightly.
 

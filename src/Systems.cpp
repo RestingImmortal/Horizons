@@ -90,6 +90,24 @@ void load_map(
     }
 }
 
+void load_start(
+    entt::registry &registry,
+    AssetManager &asset_manager,
+    const std::string &key
+) {
+    if (
+        auto start_result = asset_manager.get_start(key);
+        !start_result
+    ) {
+        std::println("Error loading start {}: {}", key, start_result.error());
+    } else {
+        load_map(
+            registry,
+            asset_manager,
+            (*start_result)->initial_map
+        );
+    }
+}
 
 void mark_bullets_for_despawn(entt::registry &registry) {
     for (

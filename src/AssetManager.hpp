@@ -86,6 +86,13 @@ struct MapData {
     explicit MapData(const json& j);
 };
 
+struct StartData {
+    std::string name;
+    std::string initial_map;
+
+    explicit StartData(const json& j);
+};
+
 class AssetManager {
 public:
     ~AssetManager();
@@ -100,6 +107,8 @@ public:
 
     std::expected<const MapData*, std::string> get_map(const std::string& name) const;
 
+    std::expected<const StartData*, std::string>get_start(const std::string& name) const;
+
     raylib::TextureUnmanaged& get_texture(const std::string& name);
 
 private:
@@ -107,6 +116,7 @@ private:
     std::unordered_map<std::string, WeaponData> m_weapon_assets;
     std::unordered_map<std::string, EngineData> m_engine_assets;
     std::unordered_map<std::string, MapData> m_map_assets;
+    std::unordered_map<std::string, StartData> m_start_assets;
     std::vector<raylib::TextureUnmanaged> m_textures;
     std::unordered_map<std::string, size_t> m_texture_map;
 
@@ -126,6 +136,8 @@ private:
 
     static bool is_map_file(const std::filesystem::directory_entry& entry);
 
+    static bool is_start_file(const std::filesystem::directory_entry& entry);
+
     static std::string get_ship_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_weapon_name(const std::filesystem::directory_entry& entry);
@@ -133,6 +145,8 @@ private:
     static std::string get_engine_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_map_name(const std::filesystem::directory_entry& entry);
+
+    static std::string get_start_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_texture_name(const std::filesystem::directory_entry& entry);
 

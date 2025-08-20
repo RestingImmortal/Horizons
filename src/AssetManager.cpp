@@ -87,6 +87,11 @@ MapData::MapData(const json& j) {
     }
 }
 
+StartData::StartData(const json &j) {
+    name = j.at("name").get<std::string>();
+    initial_map = j.at("initial map").get<std::string>();
+}
+
 // Public Methods
 
 AssetManager::~AssetManager() {
@@ -104,8 +109,25 @@ void AssetManager::load_assets() {
     }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(assets_dir)) {
-        if (is_map_file(entry)) {
+        if (is_start_file(entry)) {
+            std::string start_name = get_start_name(entry);
+
+            if (is_xml(entry)) {
+                // TODO: Add XML support for reading starts
+            } else if (is_json(entry)) {
+                try {
+                    std::ifstream file(entry.path());
+                    json jsonData = json::parse(file);
+                    auto key = jsonData.at("name").get<std::string>();
+                    m_start_assets.emplace(key, StartData(jsonData));
+                    std::println("Loaded Start {}: {}", start_name, key);
+                } catch (std::exception& e) {
+                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                }
+            }
+        } else if (is_map_file(entry)) {
             std::string map_name = get_map_name(entry);
+
             if (is_xml(entry)) {
                 // TODO: Add XML support for reading maps
             } else if (is_json(entry)) {
@@ -231,6 +253,13 @@ std::expected<const MapData*, std::string> AssetManager::get_map(const std::stri
     return std::unexpected("Map '" + name + "' not found");
 }
 
+std::expected<const StartData *, std::string> AssetManager::get_start(const std::string &name) const {
+    if (const auto it = m_start_assets.find(name); it != m_start_assets.end()) {
+        return &it->second;
+    }
+    return std::unexpected("Start '" + name + "' not found");
+}
+
 raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     if (const auto it = m_texture_map.find(name); it != m_texture_map.end()) {
         return m_textures[it->second];
@@ -277,6 +306,12 @@ bool AssetManager::is_map_file(const std::filesystem::directory_entry& entry) {
            entry.path().stem().extension() == ".map";
 }
 
+bool AssetManager::is_start_file(const std::filesystem::directory_entry &entry) {
+    return entry.is_regular_file() &&
+          (is_xml(entry) || is_json(entry)) &&
+          entry.path().stem().extension() == ".start";
+}
+
 bool AssetManager::is_texture_file(const std::filesystem::directory_entry& entry) {
     return entry.is_regular_file() && is_png(entry);
 }
@@ -294,6 +329,10 @@ std::string AssetManager::get_engine_name(const std::filesystem::directory_entry
 }
 
 std::string AssetManager::get_map_name(const std::filesystem::directory_entry &entry) {
+    return entry.path().stem().stem().string();
+}
+
+std::string AssetManager::get_start_name(const std::filesystem::directory_entry &entry) {
     return entry.path().stem().stem().string();
 }
 

@@ -26,6 +26,12 @@ void load_map(
     const std::string& key
 );
 
+void load_start(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key
+);
+
 void mark_bullets_for_despawn(
     entt::registry& registry
 );
