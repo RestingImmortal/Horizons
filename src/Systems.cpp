@@ -381,8 +381,6 @@ entt::entity spawn_player_ship(
 
     registry.emplace<Components::Transform>(entity, position);
 
-    auto& ship_physics = registry.emplace<Components::Physics>(entity);
-
     if (!ship) {
         std::println("Error loading ship: {}", ship.error());
         std::println("Minimal player ship will be spawned. Please consider resolving this issue.");
@@ -406,6 +404,11 @@ entt::entity spawn_player_ship(
 
         // Only do engine stuff when there might be engines.
         registry.emplace<Components::Thrusting>(entity, false);
+
+        // Physics values depend on found data
+        auto& ship_physics = registry.emplace<Components::Physics>(entity);
+
+        ship_physics.max_speed = (*ship)->max_speed;
 
         std::vector<float> engine_thrusts;
         for (const auto& engine : (*ship)->engines) {

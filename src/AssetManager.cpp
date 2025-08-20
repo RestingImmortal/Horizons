@@ -32,7 +32,8 @@ EngineData::EngineData(const pugi::xml_document& d) {
 }
 
 ShipData::ShipData(const json& j) {
-    texture = j.value("texture", "");
+    texture   = j.value("texture", "");
+    max_speed = j.value("max_speed", 400.0f);
     for (const auto& item : j["weapons"]) {
         weapons.push_back({
             item.at("type").get<std::string>(),
@@ -50,7 +51,8 @@ ShipData::ShipData(const json& j) {
 
 ShipData::ShipData(const pugi::xml_document& d) {
     const auto root = d.child("ShipData");
-    texture = root.child("texture").text().as_string("");
+    texture   = root.child("texture").text().as_string("");
+    max_speed = root.child("max_speed").text().as_float(400.0f);
     for (pugi::xml_node node : root.children("weapons")) {
         weapons.push_back({
             node.child("type").text().as_string(),

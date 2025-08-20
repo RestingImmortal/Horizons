@@ -48,6 +48,7 @@ struct ShipWeaponData {
 
 struct ShipData {
     std::string texture;
+    float max_speed;
     std::vector<ShipWeaponData> weapons;
     std::vector<ShipEngineData> engines;
     
