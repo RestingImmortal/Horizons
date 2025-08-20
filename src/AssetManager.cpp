@@ -224,6 +224,13 @@ std::expected<const EngineData*, std::string> AssetManager::get_engine(const std
     return std::unexpected("Engine '" + name + "' not found");
 }
 
+std::expected<const MapData*, std::string> AssetManager::get_map(const std::string& name) const {
+    if (const auto it = m_map_assets.find(name); it != m_map_assets.end()) {
+        return &it->second;
+    }
+    return std::unexpected("Map '" + name + "' not found");
+}
+
 raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     if (const auto it = m_texture_map.find(name); it != m_texture_map.end()) {
         return m_textures[it->second];
