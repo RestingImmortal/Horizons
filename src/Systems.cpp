@@ -145,7 +145,7 @@ void player_movement(
         auto& physics = view.get<Components::Physics>(entity);
         auto& thrusting = view.get<Components::Thrusting>(entity);
 
-        const float rotation_speed = 180.0f;
+        const float rotation_speed = physics.rotation;
         if (IsKeyDown(KEY_RIGHT)) {
             transform.rotation += rotation_speed * dt;
         }
@@ -407,10 +407,10 @@ entt::entity spawn_player_ship(
 
         // Physics values depend on found data
         auto& ship_physics = registry.emplace<Components::Physics>(entity);
-
         ship_physics.max_speed = (*ship)->max_speed;
 
         std::vector<float> engine_thrusts;
+        std::vector<float> engine_rotations;
         for (const auto& engine : (*ship)->engines) {
             spawn_engine(
                 registry,
@@ -427,13 +427,19 @@ entt::entity spawn_player_ship(
                 std::println("Couldn't find engine_type: {} while constructing ship: {}", engine.engine_type, key);
             } else {
                 engine_thrusts.push_back((*engine_result)->thrust);
+                engine_rotations.push_back((*engine_result)->rotation);
             }
         }
-        float sum = 0.0f;
+        float thrust_sum = 0.0f;
         for (const auto& thrust : engine_thrusts) {
-            sum += thrust;
+            thrust_sum += thrust;
         }
-        ship_physics.acceleration = sum;
+        ship_physics.acceleration = thrust_sum;
+        float rotation_sum = 0.0f;
+        for (const auto& rotation : engine_rotations) {
+            rotation_sum += rotation;
+        }
+        ship_physics.rotation = rotation_sum;
     }
 
     return entity;

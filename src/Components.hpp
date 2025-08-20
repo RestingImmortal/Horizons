@@ -33,6 +33,7 @@ namespace Components {
         float acceleration = 20.0f;
         float max_speed = 400.0f;
         raylib::Vector2 velocity = {0.0f, 0.0f};
+        float rotation = 180.0f;
     };
 
     struct Player {};
