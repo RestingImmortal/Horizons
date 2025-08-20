@@ -106,6 +106,13 @@ void load_start(
             asset_manager,
             (*start_result)->initial_map
         );
+
+        spawn_player_ship(
+            registry,
+            asset_manager,
+            (*start_result)->player.ship_type,
+            raylib::Vector2{(*start_result)->player.x, (*start_result)->player.y}
+        );
     }
 }
 

@@ -90,6 +90,11 @@ MapData::MapData(const json& j) {
 StartData::StartData(const json &j) {
     name = j.at("name").get<std::string>();
     initial_map = j.at("initial map").get<std::string>();
+    player = {
+        j.at("player").at("ship_type").get<std::string>(),
+        j.at("player").at("x").get<float>(),
+        j.at("player").at("y").get<float>()
+    };
 }
 
 // Public Methods

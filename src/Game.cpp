@@ -25,11 +25,11 @@ void Game::init() {
 
     m_asset_manager.load_assets();
 
-        load_start(
-            m_registry,
-            m_asset_manager,
-            "Multi-start unsupported still. Harass Luna if this is limiting you"
-        );
+    load_start(
+        m_registry,
+        m_asset_manager,
+        "Multi-start unsupported still. Harass Luna if this is limiting you"
+    );
 
     // Debug printing
     const auto ship = m_asset_manager.get_ship("example");
@@ -62,14 +62,6 @@ void Game::init() {
         }
     }
     std::println("~~~~~~~");
-
-    // PLAYER
-    spawn_player_ship(
-        m_registry,
-        m_asset_manager,
-        "example",
-        raylib::Vector2{200.0, 200.0}
-    );
 }
 
 void Game::update(const float dt) {

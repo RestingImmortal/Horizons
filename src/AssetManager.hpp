@@ -87,8 +87,15 @@ struct MapData {
 };
 
 struct StartData {
+    struct StartPlayerData {
+        std::string ship_type;
+        float x;
+        float y;
+    };
+
     std::string name;
     std::string initial_map;
+    StartPlayerData player;
 
     explicit StartData(const json& j);
 };
