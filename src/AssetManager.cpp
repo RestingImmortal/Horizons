@@ -62,7 +62,13 @@ ShipData::ShipData(const pugi::xml_document& d) {
             node.child("y").text().as_float()
         });
     }
-    // TODO: Apparently I forgot to add engine support here
+    for (pugi::xml_node node : root.children("engines")) {
+        engines.push_back({
+            node.child("type").text().as_string(),
+            node.child("x").text().as_float(),
+            node.child("y").text().as_float()
+        });
+    }
 }
 
 MapData::MapData(const json& j) {
@@ -91,6 +97,32 @@ MapData::MapData(const json& j) {
     }
 }
 
+MapData::MapData(const pugi::xml_document& d) {
+    const auto root = d.child("MapData");
+    metadata = { root.child("meta").child("name").text().as_string() };
+    for (pugi::xml_node node : root.children("backgrounds")) {
+        backgrounds.push_back({
+            node.child("image").text().as_string(),
+            node.child("layer").text().as_int()
+        });
+    }
+    for (pugi::xml_node node : root.children("ships")) {
+        ships.push_back({
+            node.child("type").text().as_string(),
+            node.child("x").text().as_float(),
+            node.child("y").text().as_float()
+        });
+    }
+    for (pugi::xml_node node : root.children("objects")) {
+        objects.push_back({
+            node.child("texture").text().as_string(),
+            node.child("x").text().as_float(),
+            node.child("y").text().as_float(),
+            node.child("layer").text().as_int()
+        });
+    }
+}
+
 StartData::StartData(const json &j) {
     name = j.at("name").get<std::string>();
     initial_map = j.at("initial map").get<std::string>();
@@ -98,6 +130,17 @@ StartData::StartData(const json &j) {
         j.at("player").at("ship_type").get<std::string>(),
         j.at("player").at("x").get<float>(),
         j.at("player").at("y").get<float>()
+    };
+}
+
+StartData::StartData(const pugi::xml_document& d) {
+    const auto root = d.child("StartData");
+    name = root.child("name").text().as_string();
+    initial_map = root.child("initial map").text().as_string();
+    player = {
+        root.child("player").child("ship_type").text().as_string(),
+        root.child("player").child("x").text().as_float(),
+        root.child("player").child("y").text().as_float()
     };
 }
 

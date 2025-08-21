@@ -86,6 +86,7 @@ struct MapData {
     std::vector<ObjectMapData> objects;
 
     explicit MapData(const json& j);
+    explicit MapData(const pugi::xml_document& d);
 };
 
 struct StartData {
@@ -100,6 +101,7 @@ struct StartData {
     StartPlayerData player;
 
     explicit StartData(const json& j);
+    explicit StartData(const pugi::xml_document& d);
 };
 
 class AssetManager {
