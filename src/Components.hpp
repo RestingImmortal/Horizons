@@ -69,7 +69,7 @@ namespace Components {
 
     struct Weapon {
         Weapon() = default;
-        Weapon(std::string key, const AssetManager& asset_manager);
+        Weapon(const std::string& key, const AssetManager& asset_manager);
 
         std::string munition;
         float damage = 0.0f;
