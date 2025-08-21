@@ -225,8 +225,10 @@ void AssetManager::load_assets() {
             if (is_xml(entry)) {
                 pugi::xml_document doc;
 
-                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
-                    !result) {
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
                     std::println("XML [{}] parsed with errors", entry.path().string());
                     std::println("Error: {}", result.description());
                     continue;
@@ -250,8 +252,10 @@ void AssetManager::load_assets() {
             if (is_xml(entry)) {
                 pugi::xml_document doc;
 
-                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
-                    !result) {
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
                     std::println("XML [{}] parsed with errors", entry.path().string());
                     std::println("Error: {}", result.description());
                     continue;
@@ -275,8 +279,10 @@ void AssetManager::load_assets() {
             if (is_xml(entry)) {
                 pugi::xml_document doc;
 
-                if (pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
-                    !result) {
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
                     std::println("XML [{}] parsed with errors", entry.path().string());
                     std::println("Error: {}", result.description());
                     continue;
