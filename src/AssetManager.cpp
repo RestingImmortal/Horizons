@@ -432,6 +432,9 @@ void AssetManager::unload_all() {
     m_texture_map.clear();
     m_ship_assets.clear();
     m_weapon_assets.clear();
+    m_engine_assets.clear();
+    m_map_assets.clear();
+    m_start_assets.clear();
 }
 
 raylib::TextureUnmanaged& AssetManager::get_error_texture() {
