@@ -165,7 +165,20 @@ void AssetManager::load_assets() {
             std::string start_name = get_start_name(entry);
 
             if (is_xml(entry)) {
-                // TODO: Add XML support for reading starts
+                pugi::xml_document doc;
+
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
+                    std::println("XML [{}] parsed with errors", entry.path().string());
+                    std::println("Error: {}", result.description());
+                    continue;
+                }
+
+                std::string key = doc.child("StartData").child("name").text().as_string();
+                m_start_assets.emplace(key, StartData(doc));
+                std::println("Loaded Start {}: {}", start_name, key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
@@ -181,7 +194,20 @@ void AssetManager::load_assets() {
             std::string map_name = get_map_name(entry);
 
             if (is_xml(entry)) {
-                // TODO: Add XML support for reading maps
+                pugi::xml_document doc;
+
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
+                    std::println("XML [{}] parsed with errors", entry.path().string());
+                    std::println("Error: {}", result.description());
+                    continue;
+                }
+
+                std::string key = doc.child("MapData").child("meta").child("name").text().as_string();
+                m_map_assets.emplace(key, MapData(doc));
+                std::println("Loaded Map {}: {}", map_name, key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
