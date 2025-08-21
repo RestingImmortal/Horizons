@@ -9,6 +9,7 @@
 
 #include "AssetManager.hpp"
 #include "Components.hpp"
+#include "Logger.hpp"
 #include "Timer.hpp"
 
 void camera_to_player(
@@ -56,7 +57,7 @@ void load_map(
         auto map_result = asset_manager.get_map(key);
         !map_result
     ) {
-        std::println("Error loading map {}: {}", key, map_result.error());
+        H_WARNING("load_map", "{}: {}", key, map_result.error());
     } else {
         const auto map_data = *map_result;
 
@@ -99,7 +100,7 @@ void load_start(
         auto start_result = asset_manager.get_start(key);
         !start_result
     ) {
-        std::println("Error loading start {}: {}", key, start_result.error());
+        H_ERROR("load_start", "{}: {}", key, start_result.error());
     } else {
         load_map(
             registry,
@@ -323,7 +324,7 @@ entt::entity spawn_engine(
         const auto engine = asset_manager.get_engine(key);
         !engine
     ) {
-        std::println("Engine not found for: {}, minimal child will be spawned instead", key);
+        H_WARNING("spawn_engine", "Engine not found for: {}, minimal child will be spawned instead", key);
     } else {
         registry.emplace<Components::Engine>(entity, (*engine)->thrust);
 
@@ -382,8 +383,8 @@ entt::entity spawn_player_ship(
     registry.emplace<Components::Transform>(entity, position);
 
     if (!ship) {
-        std::println("Error loading ship: {}", ship.error());
-        std::println("Minimal player ship will be spawned. Please consider resolving this issue.");
+        H_ERROR("spawn_player_ship", "{}", ship.error());
+        H_WARNING("spawn_player_ship", "Minimal player ship will be spawned. Please consider resolving this.");
     } else {
         // If the ship isn't found, no texture will be found. Thus, don't give the entity a Renderable component.
         auto& renderable = registry.emplace<Components::Renderable>(entity);
@@ -424,7 +425,7 @@ entt::entity spawn_player_ship(
                 auto engine_result = asset_manager.get_engine(engine.engine_type);
                 !engine_result
             ) {
-                std::println("Couldn't find engine_type: {} while constructing ship: {}", engine.engine_type, key);
+                H_WARNING("spawn_player_ship", "Couldn't find engine_type: {} while constructing ship: {}", engine.engine_type, key);
             } else {
                 engine_thrusts.push_back((*engine_result)->thrust);
                 engine_rotations.push_back((*engine_result)->rotation);
@@ -471,8 +472,8 @@ entt::entity spawn_ship(
     registry.emplace<Components::Physics>(entity);
 
     if (!ship) {
-        std::println("Error loading ship: {}", ship.error());
-        std::println("Minimal ship will be spawned. Consider resolving this issue.");
+        H_ERROR("spawn_ship", "{}", ship.error());
+        H_WARNING("spawn_ship", "Minimal ship entity will be spawned.");
     } else {
         // If the ship can't be found, there will be no texture found, and thus a renderable is useless
         auto& renderable = registry.emplace<Components::Renderable>(entity);
