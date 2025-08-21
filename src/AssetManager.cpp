@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <fstream>
 
+#include "Logger.hpp"
+
 WeaponData::WeaponData(const json& j) {
     munition = j.value("munition", "");
     damage   = j.value("damage", 0.0f);
@@ -156,8 +158,8 @@ void AssetManager::load_assets() {
     std::filesystem::path assets_dir = "./assets/";
 
     if (!std::filesystem::exists(assets_dir)) {
-        std::println("Assets directory not found!");
-        return;
+        H_CRITICAL("Asset Loading", "Assets directory not found!");
+        throw std::runtime_error("Assets directory not found!");
     }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(assets_dir)) {
@@ -171,23 +173,22 @@ void AssetManager::load_assets() {
                     pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
                     !result
                 ) {
-                    std::println("XML [{}] parsed with errors", entry.path().string());
-                    std::println("Error: {}", result.description());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
                     continue;
                 }
 
                 std::string key = doc.child("StartData").child("name").text().as_string();
                 m_start_assets.emplace(key, StartData(doc));
-                std::println("Loaded Start {}: {}", start_name, key);
+                H_INFO("Asset Loader", "Loaded Start {}: {}", start_name, key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
                     auto key = jsonData.at("name").get<std::string>();
                     m_start_assets.emplace(key, StartData(jsonData));
-                    std::println("Loaded Start {}: {}", start_name, key);
+                    H_INFO("Asset Loader", "Loaded Start {}: {}", start_name, key);
                 } catch (std::exception& e) {
-                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
         } else if (is_map_file(entry)) {
@@ -200,23 +201,22 @@ void AssetManager::load_assets() {
                     pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
                     !result
                 ) {
-                    std::println("XML [{}] parsed with errors", entry.path().string());
-                    std::println("Error: {}", result.description());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
                     continue;
                 }
 
                 std::string key = doc.child("MapData").child("meta").child("name").text().as_string();
                 m_map_assets.emplace(key, MapData(doc));
-                std::println("Loaded Map {}: {}", map_name, key);
+                H_INFO("Asset Loader", "Loaded Map {}: {}", map_name, key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
                     auto key = jsonData.at("meta").at("name").get<std::string>();
                     m_map_assets.emplace(key, MapData(jsonData));
-                    std::println("Loaded Map {}: {}", map_name, key);
+                    H_INFO("Asset Loader", "Loaded Map {}: {}", map_name, key);
                 } catch (std::exception& e) {
-                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
         } else if (is_engine_file(entry)) {
@@ -229,21 +229,20 @@ void AssetManager::load_assets() {
                     pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
                     !result
                 ) {
-                    std::println("XML [{}] parsed with errors", entry.path().string());
-                    std::println("Error: {}", result.description());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
                     continue;
                 }
 
                 m_engine_assets.emplace(key, EngineData(doc));
-                std::println("Loaded Engine: {}", key);
+                H_INFO("Asset Loader", "Loaded Engine: {}", key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
                     m_engine_assets.emplace(key, EngineData(jsonData));
-                    std::println("Loaded Engine: {}", key);
+                    H_INFO("Asset Loader", "Loaded Engine: {}", key);
                 } catch (const std::exception& e) {
-                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
         } else if (is_weapon_file(entry)) {
@@ -256,21 +255,20 @@ void AssetManager::load_assets() {
                     pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
                     !result
                 ) {
-                    std::println("XML [{}] parsed with errors", entry.path().string());
-                    std::println("Error: {}", result.description());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
                     continue;
                 }
 
                 m_weapon_assets.emplace(key, WeaponData(doc));
-                 std::println("Loaded Weapon: {}", key);
+                H_INFO("Asset Loader", "Loaded Weapon: {}", key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
                     m_weapon_assets.emplace(key, WeaponData(jsonData));
-                    std::println("Loaded Weapon: {}", key);
+                    H_INFO("Asset Loader", "Loaded Weapon: {}", key);
                 } catch (const std::exception& e) {
-                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
         } else if (is_ship_file(entry)) {
@@ -283,28 +281,27 @@ void AssetManager::load_assets() {
                     pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
                     !result
                 ) {
-                    std::println("XML [{}] parsed with errors", entry.path().string());
-                    std::println("Error: {}", result.description());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
                     continue;
                 }
 
                 m_ship_assets.emplace(key, ShipData(doc));
-                std::println("Loaded Ship: {}", key);
+                H_INFO("Asset Loader", "Loaded Ship: {}", key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
                     m_ship_assets.emplace(key, ShipData(jsonData));
-                    std::println("Loaded Ship: {}", key);
+                    H_INFO("Asset Loader", "Loaded Ship: {}", key);
                 } catch (const std::exception& e) {
-                    std::println("Error loading {}: {}", entry.path().string(), e.what());
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
         } else if (is_texture_file(entry)) {
             std::string name = get_texture_name(entry);
             m_textures.emplace_back(entry.path().string());
             m_texture_map[name] = m_textures.size() - 1;
-            std::println("Loaded Texture: {}", name);
+            H_INFO("Asset Loader", "Loaded Texture: {}", name);
         }
     }
 }
@@ -348,7 +345,7 @@ raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     if (const auto it = m_texture_map.find(name); it != m_texture_map.end()) {
         return m_textures[it->second];
     }
-    std::println("Error getting texture {}", name);
+    H_ERROR("Asset Loader", "Could not find texture: {}", name);
     return get_error_texture();
 }
 
