@@ -14,6 +14,7 @@ ConfigManager::ConfigManager() {
         std::ifstream file("./META.json");
         json jsonData = json::parse(file);
         title = jsonData.value("title", "Untitled Game");
+        log_level = Logger::from_string(jsonData.value("log_level", "Warning"));
     } catch (const std::exception& e) {
         std::println("Error initializing game: {}", e.what());
         throw std::runtime_error("Couldn't initialize game.");

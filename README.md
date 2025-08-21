@@ -23,7 +23,8 @@ The initial map should point to a map with a declared meta/name of whatever you 
 You can make the appropriate files following the structure expected by the [asset manager](src/AssetManager.cpp).
 For this, you can use either json or xml, depending on your preference. Both are currently supported. In practice, xml support lags behind slightly.
 
-The engine also expects a file called META.json next to the executable. This expects a title field currently.
+The engine also expects a file called META.json next to the executable.
+This expects a title field, as well as a log_level field.
 
 ## Compilation Instructions
 
