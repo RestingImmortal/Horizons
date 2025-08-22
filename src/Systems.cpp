@@ -204,6 +204,107 @@ void player_movement(
     };
 }
 
+void print_engine(
+    const AssetManager& asset_manager,
+    const int indentation_level,
+    const std::string& engine
+) {
+    if (
+        const auto engine_result = asset_manager.get_engine(engine);
+        !engine_result
+    ) {
+        H_DEBUG("Assett Printer", "Engine '{}' not found", engine);
+    } else {
+        const std::string indent(indentation_level, '-');
+
+        std::println("{}Engine Texture: {}", indent, (*engine_result)->texture);
+        std::println("{}Engine Thrust: {}", indent, (*engine_result)->thrust);
+        std::println("{}Engine Rotation: {}", indent, (*engine_result)->rotation);
+    }
+}
+
+void print_ship(
+    const AssetManager& asset_manager,
+    const int indentation_level,
+    const std::string& ship
+) {
+    H_DEBUG("Asset Printer", "Printing out ship: {}", ship);
+
+    if (
+        const auto ship_result = asset_manager.get_ship(ship);
+        !ship_result
+    ) {
+        H_DEBUG("Asset Printer", "Ship '{}' not found", ship);
+    } else {
+        const std::string indent(indentation_level, '-');
+
+        std::println("{}Ship Texture: {}", indent, (*ship_result)->texture);
+        std::println("{}Ship Max Speed: {}", indent, (*ship_result)->max_speed);
+        for (const auto& weapon : (*ship_result)->weapons) {
+            std::println("{}Weapon:", indent);
+            std::println("{}-Weapon Type: {}", indent, weapon.weapon_type);
+            std::println("{}-Weapon Coords: {}, {}", indent, weapon.x, weapon.y);
+        }
+        for (const auto& engine : (*ship_result)->engines) {
+            std::println("{}Engine:", indent);
+            std::println("{}-Engine Type: {}", indent, engine.engine_type);
+            std::println("{}-Engine Coords: {}, {}", indent, engine.x, engine.y);
+        }
+    }
+}
+
+void print_ship_recurse(
+    const AssetManager& asset_manager,
+    const int indentation_level,
+    const std::string& ship
+) {
+    H_DEBUG("Asset Printer", "Printing out ship: {}", ship);
+
+    if (
+        const auto ship_result = asset_manager.get_ship(ship);
+        !ship_result
+    ) {
+        H_DEBUG("Asset Printer", "Ship '{}' not found", ship);
+    } else {
+        const std::string indent(indentation_level, '-');
+
+        std::println("{}Ship Texture: {}", indent, (*ship_result)->texture);
+        std::println("{}Ship Max Speed: {}", indent, (*ship_result)->max_speed);
+        for (const auto& weapon : (*ship_result)->weapons) {
+            std::println("{}Weapon:", indent);
+            std::println("{}-Weapon Type: {}", indent, weapon.weapon_type);
+            print_weapon(asset_manager, indentation_level + 2, weapon.weapon_type);
+            std::println("{}-Weapon Coords: {}, {}", indent, weapon.x, weapon.y);
+        }
+        for (const auto& engine : (*ship_result)->engines) {
+            std::println("{}Engine:", indent);
+            std::println("{}-Engine Type: {}", indent, engine.engine_type);
+            print_engine(asset_manager, indentation_level + 2, engine.engine_type);
+            std::println("{}-Engine Coords: {}, {}", indent, engine.x, engine.y);
+        }
+    }
+}
+
+void print_weapon(
+    const AssetManager& asset_manager,
+    const int indentation_level,
+    const std::string& weapon
+) {
+    if (
+        const auto weapon_result = asset_manager.get_weapon(weapon);
+        !weapon_result
+    ) {
+        H_DEBUG("Asset Printer", "Weapon '{}' not found", weapon);
+    } else {
+        const std::string indent(indentation_level, '-');
+
+        std::println("{}Weapon Munition: {}", indent, (*weapon_result)->munition);
+        std::println("{}Weapon Damage: {}", indent, (*weapon_result)->damage);
+        std::println("{}Weapon Lifetime: {}", indent, (*weapon_result)->lifetime);
+        std::println("{}Weapon Cooldown: {}", indent, (*weapon_result)->cooldown);
+    }
+}
+
 void render_sprites(entt::registry& registry) {
     const auto view = registry.view<
         Components::Transform,

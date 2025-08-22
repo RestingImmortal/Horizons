@@ -42,6 +42,30 @@ void player_movement(
     float dt
 );
 
+void print_engine(
+    const AssetManager& asset_manager,
+    int indentation_level,
+    const std::string& engine
+);
+
+void print_ship(
+    const AssetManager& asset_manager,
+    int indentation_level,
+    const std::string& ship
+);
+
+void print_ship_recurse(
+    const AssetManager& asset_manager,
+    int indentation_level,
+    const std::string& ship
+);
+
+void print_weapon(
+    const AssetManager& asset_manager,
+    int indentation_level,
+    const std::string& weapon
+);
+
 void render_sprites(
     entt::registry& registry
 );

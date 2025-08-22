@@ -32,36 +32,11 @@ void Game::init() {
     );
 
     // Debug printing
-    const auto ship = m_asset_manager.get_ship("example");
-    std::println("~~~~~~~\nExample ship:");
-    if (!ship) { std::println("Ruh roh!"); }
-    else {
-        const auto ship_data = *ship;
-        std::println("Texture: {}", ship_data->texture);
-        for (auto weapon : ship_data->weapons) {
-            std::println("Weapon type: {}", weapon.weapon_type);
-            if (auto weapon_result = m_asset_manager.get_weapon(weapon.weapon_type);
-                !weapon_result) { std::println("Ruh roh!"); }
-            else {
-                std::println("Weapon munition: {}", (*weapon_result)->munition);
-                std::println("Weapon damage: {}", (*weapon_result)->damage);
-                std::println("Weapon lifetime: {}", (*weapon_result)->lifetime);
-                std::println("Weapon cooldown: {}", (*weapon_result)->cooldown);
-            }
-            std::println("Weapon coords: {}, {}", weapon.x, weapon.y);
-        }
-        for (auto engine : ship_data->engines) {
-            std::println("Engine type: {}", engine.engine_type);
-            if (auto engine_result = m_asset_manager.get_engine(engine.engine_type);
-                !engine_result) { std::println("Ruh roh!"); }
-            else {
-                std::println("Engine texture: {}", (*engine_result)->texture);
-                std::println("Engine thrust: {}", (*engine_result)->thrust);
-            }
-            std::println("Engine coords: {}, {}", engine.x, engine.y);
-        }
-    }
-    std::println("~~~~~~~");
+    print_ship_recurse(
+        m_asset_manager,
+        1,
+        "example"
+    );
 }
 
 void Game::update(const float dt) {
