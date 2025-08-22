@@ -60,7 +60,8 @@ target_include_directories(${PROJECT_EXECUTABLE_NAME} PRIVATE ${CMAKE_SOURCE_DIR
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 if (MSVC)
-    # Do nothing, cause release build anyways.
+    #Needed for supporting the logger macros on MSVC
+    target_compile_options(${PROJECT_EXECUTABLE_NAME} PRIVATE /Zc:preprocessor)
 else()
     target_compile_options(${PROJECT_EXECUTABLE_NAME} PRIVATE -Wall -Wextra -pedantic)
 endif()
