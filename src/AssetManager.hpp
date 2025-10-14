@@ -21,6 +21,7 @@ struct WeaponData {
     float damage;
     float lifetime;
     float cooldown;
+    float radius;
 
     explicit WeaponData(const json& j);
     explicit WeaponData(const pugi::xml_document& d);
@@ -50,6 +51,7 @@ struct ShipWeaponData {
 struct ShipData {
     std::string texture;
     float max_speed;
+    float radius;
     std::vector<ShipWeaponData> weapons;
     std::vector<ShipEngineData> engines;
     

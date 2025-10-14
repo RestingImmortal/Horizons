@@ -129,6 +129,10 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
+void on_collision(const Events::Collision& event) {
+    H_INFO("Collision", "[{}] and [{}]", static_cast<uint32_t>(event.a), static_cast<uint32_t>(event.b));
+}
+
 void player_movement(
     entt::registry& registry,
     AssetManager& asset_manager,
@@ -240,6 +244,7 @@ void print_ship(
 
         std::println("{}Ship Texture: {}", indent, (*ship_result)->texture);
         std::println("{}Ship Max Speed: {}", indent, (*ship_result)->max_speed);
+        std::println("{}Ship Radius: {}", indent, (*ship_result)->radius);
         for (const auto& weapon : (*ship_result)->weapons) {
             std::println("{}Weapon:", indent);
             std::println("{}-Weapon Type: {}", indent, weapon.weapon_type);
@@ -270,6 +275,7 @@ void print_ship_recurse(
 
         std::println("{}Ship Texture: {}", indent, (*ship_result)->texture);
         std::println("{}Ship Max Speed: {}", indent, (*ship_result)->max_speed);
+        std::println("{}Ship Radius: {}", indent, (*ship_result)->radius);
         for (const auto& weapon : (*ship_result)->weapons) {
             std::println("{}Weapon:", indent);
             std::println("{}-Weapon Type: {}", indent, weapon.weapon_type);
@@ -302,6 +308,7 @@ void print_weapon(
         std::println("{}Weapon Damage: {}", indent, (*weapon_result)->damage);
         std::println("{}Weapon Lifetime: {}", indent, (*weapon_result)->lifetime);
         std::println("{}Weapon Cooldown: {}", indent, (*weapon_result)->cooldown);
+        std::println("{}Weapon radius: {}", indent, (*weapon_result)->radius);
     }
 }
 
@@ -408,6 +415,12 @@ entt::entity spawn_bullet(
 
     registry.emplace<Components::RenderOrder>(bullet, 10'000);
 
+    registry.emplace<Components::Collider>(bullet,
+        weapon.radius,
+        0b10u,
+        0b1u
+    );
+
     return bullet;
 }
 
@@ -492,6 +505,12 @@ entt::entity spawn_player_ship(
         renderable.texture = asset_manager.get_texture((*ship)->texture);
 
         registry.emplace<Components::RenderOrder>(entity, 1000);
+
+        registry.emplace<Components::Collider>(entity,
+            (*ship)->radius,
+            0b1u,
+            0b10u
+        );
 
         // If the ship isn't found, there would be no weapons. Thus, only try spawning them when they might be present.
         for (const auto& weapon : (*ship)->weapons) {
@@ -582,6 +601,12 @@ entt::entity spawn_ship(
 
         registry.emplace<Components::RenderOrder>(entity, 0);
 
+        registry.emplace<Components::Collider>(entity,
+            (*ship)->radius,
+            0b1u,
+            0b10u
+        );
+
         // If the ship can't be found, there will be no engines found, and thus it doesn't need to bloat engine processing.
         registry.emplace<Components::Thrusting>(entity, false);
 
@@ -655,6 +680,41 @@ void update_bullet_timers(
         auto& bullet = view.get<Components::Bullet>(entity);
 
         bullet.despawn_timer.update(dt);
+    }
+}
+
+void update_collision(
+    entt::registry& registry,
+    entt::dispatcher& dispatcher
+) {
+    const auto view = registry.view<Components::Transform, Components::Collider>();
+
+    for (auto it_a = view.begin(); it_a != view.end(); ++it_a) {
+        const auto entity_a = *it_a;
+        const auto& transform_a = view.get<Components::Transform>(entity_a);
+        const auto& collider_a  = view.get<Components::Collider>(entity_a);
+
+        for (auto it_b = std::next(it_a); it_b != view.end(); ++it_b) {
+            const auto entity_b = *it_b;
+            const auto& transform_b = view.get<Components::Transform>(entity_b);
+            const auto& collider_b  = view.get<Components::Collider>(entity_b);
+
+            if (
+                !((collider_a.collides_with & collider_b.category) ||
+                    (collider_b.collides_with & collider_a.category))
+            ) {
+                continue;
+            }
+
+            const raylib::Vector2 delta = transform_b.position - transform_a.position;
+
+            const float dist_sq = delta.x * delta.x + delta.y * delta.y;
+            const float radius_sum = collider_a.radius + collider_b.radius;
+
+            if (dist_sq <= radius_sum * radius_sum) {
+                dispatcher.enqueue<Events::Collision>(entity_a, entity_b);
+            }
+        }
     }
 }
 

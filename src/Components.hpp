@@ -19,6 +19,12 @@ namespace Components {
         Timer despawn_timer;
     };
 
+    struct Collider {
+        float radius = 0.0f;
+        uint32_t category = 0;
+        uint32_t collides_with = 0;
+    };
+
     struct DespawnMarker {};
 
     struct Engine {
@@ -75,6 +81,7 @@ namespace Components {
         float damage = 0.0f;
         float lifetime = 0.01f;
         float cooldown = 2'000'000.0f;
+        float radius = 0.0f;
         float shot_speed = 100;
         Timer fire_timer;
 

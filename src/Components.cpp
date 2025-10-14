@@ -20,6 +20,7 @@ Weapon::Weapon(const std::string& key, const AssetManager& asset_manager)
         damage   = data->damage;
         lifetime = data->lifetime;
         cooldown = data->cooldown;
+        radius   = data->radius;
     }
 }
 

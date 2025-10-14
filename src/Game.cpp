@@ -25,6 +25,8 @@ void Game::init() {
 
     m_asset_manager.load_assets();
 
+    setup_event_handlers();
+
     load_start(
         m_registry,
         m_asset_manager,
@@ -38,11 +40,14 @@ void Game::update(const float dt) {
     player_movement(m_registry, m_asset_manager, dt);
     update_physics_transforms(m_registry, dt);
     update_local_transforms(m_registry);
+    update_collision(m_registry, m_dispatcher);
     update_background_position(m_registry);
     engine_visibility(m_registry);
     mark_bullets_for_despawn(m_registry);
     camera_to_player(m_registry, m_camera);
     despawn_entities(m_registry);
+
+    m_dispatcher.update();
 }
 
 void Game::render() {
@@ -55,3 +60,8 @@ void Game::render() {
 
     m_window.EndDrawing();
 }
+
+void Game::setup_event_handlers() {
+    m_dispatcher.sink<Events::Collision>().connect<&on_collision>();
+}
+

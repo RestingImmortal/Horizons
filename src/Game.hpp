@@ -19,11 +19,12 @@ public:
         ) {
             m_window.SetConfigFlags(FLAG_WINDOW_RESIZABLE);
         }
-    
+
     void run();
 
 private:
     entt::registry m_registry;
+    entt::dispatcher m_dispatcher;
     raylib::Window m_window;
     raylib::Camera2D m_camera;
     AssetManager m_asset_manager;
@@ -33,4 +34,6 @@ private:
     void update(float dt);
 
     void render();
+
+    void setup_event_handlers();
 };

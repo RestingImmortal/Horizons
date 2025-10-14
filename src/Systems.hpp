@@ -6,6 +6,7 @@
 
 #include "AssetManager.hpp"
 #include "Components.hpp"
+#include "Events.hpp"
 
 void camera_to_player(
     entt::registry& registry,
@@ -34,6 +35,10 @@ void load_start(
 
 void mark_bullets_for_despawn(
     entt::registry& registry
+);
+
+void on_collision(
+    const Events::Collision& event
 );
 
 void player_movement(
@@ -138,6 +143,11 @@ void update_background_position(
 void update_bullet_timers(
     entt::registry& registry,
     float dt
+);
+
+void update_collision(
+    entt::registry& registry,
+    entt::dispatcher& dispatcher
 );
 
 void update_local_transforms(
