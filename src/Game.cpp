@@ -30,13 +30,6 @@ void Game::init() {
         m_asset_manager,
         "Multi-start unsupported still. Harass Luna if this is limiting you"
     );
-
-    // Debug printing
-    print_ship_recurse(
-        m_asset_manager,
-        1,
-        "example"
-    );
 }
 
 void Game::update(const float dt) {

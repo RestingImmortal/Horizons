@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <print>
-
 #include <entt/entt.hpp>
 #include <raylib-cpp.hpp>
 
@@ -11,11 +9,16 @@
 
 class Game {
 public:
-    Game(const int width, const int height, const std::string& title)
-        : m_window(width, height, title),
-          m_camera({GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f}, {0, 0}, 0.0f, 1.0f) {
+    Game(const int width, const int height, const std::string& title) :
+        m_window(width, height, title),
+        m_camera(
+            {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f},
+            {0, 0},
+            0.0f,
+            1.0f
+        ) {
             m_window.SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-          }
+        }
     
     void run();
 
