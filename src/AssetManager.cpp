@@ -90,7 +90,8 @@ MapData::MapData(const json& j) {
         ships.push_back({
             item.at("type").get<std::string>(),
             item.at("x").get<float>(),
-            item.at("y").get<float>()
+            item.at("y").get<float>(),
+            item.at("affiliation").get<uint32_t>()
         });
     }
     for (const auto& item : j["objects"]) {
@@ -116,7 +117,8 @@ MapData::MapData(const pugi::xml_document& d) {
         ships.push_back({
             node.child("type").text().as_string(),
             node.child("x").text().as_float(),
-            node.child("y").text().as_float()
+            node.child("y").text().as_float(),
+            node.child("affiliation").text().as_uint()
         });
     }
     for (pugi::xml_node node : root.children("objects")) {

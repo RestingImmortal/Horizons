@@ -38,6 +38,7 @@ void mark_bullets_for_despawn(
 );
 
 void on_collision(
+    entt::registry& registry,
     const Events::Collision& event
 );
 
@@ -87,7 +88,8 @@ entt::entity spawn_bullet(
     AssetManager& asset_manager,
     Components::Transform& transform,
     const Components::Physics& physics,
-    const Components::Weapon& weapon
+    const Components::Weapon& weapon,
+    uint32_t affiliation
 );
 
 entt::entity spawn_engine(
@@ -125,7 +127,8 @@ entt::entity spawn_ship(
     entt::registry& registry,
     AssetManager& asset_manager,
     const std::string& key,
-    raylib::Vector2 position
+    raylib::Vector2 position,
+    uint32_t affiliation
 );
 
 entt::entity spawn_weapon(

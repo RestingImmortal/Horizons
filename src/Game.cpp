@@ -62,6 +62,6 @@ void Game::render() {
 }
 
 void Game::setup_event_handlers() {
-    m_dispatcher.sink<Events::Collision>().connect<&on_collision>();
+    m_dispatcher.sink<Events::Collision>().connect<&on_collision>(m_registry);
 }
 

@@ -73,6 +73,7 @@ struct MapData {
         std::string ship_type;
         float x;
         float y;
+        uint32_t affiliation;
     };
 
     struct ObjectMapData {

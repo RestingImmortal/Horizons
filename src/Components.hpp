@@ -11,6 +11,10 @@
 #include "Timer.hpp"
 
 namespace Components {
+    struct Affiliation {
+        uint32_t id;
+    };
+
     struct Background {};
 
     struct Bullet {

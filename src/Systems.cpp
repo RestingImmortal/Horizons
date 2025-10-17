@@ -75,7 +75,8 @@ void load_map(
                 registry,
                 asset_manager,
                 ship.ship_type,
-                raylib::Vector2{ship.x, ship.y}
+                raylib::Vector2{ship.x, ship.y},
+                ship.affiliation
             );
         }
 
@@ -129,8 +130,14 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
-void on_collision(const Events::Collision& event) {
-    H_INFO("Collision", "[{}] and [{}]", static_cast<uint32_t>(event.a), static_cast<uint32_t>(event.b));
+void on_collision(entt::registry& registry, const Events::Collision& event) {
+    if (const auto a_affiliation = registry.try_get<Components::Affiliation>(event.a)) {
+        if (const auto b_affiliation = registry.try_get<Components::Affiliation>(event.b)) {
+            if (a_affiliation->id != b_affiliation->id) {
+                H_INFO("Collision", "[{}] and [{}]", static_cast<uint32_t>(event.a), static_cast<uint32_t>(event.b));
+            }
+        }
+    }
 }
 
 void player_movement(
@@ -143,12 +150,15 @@ void player_movement(
             Components::Transform,
             Components::Physics,
             Components::Thrusting,
-            Components::Player>();
+            Components::Player,
+            Components::Affiliation
+        >();
         const auto entity : view
     ) {
         auto& transform = view.get<Components::Transform>(entity);
         auto& physics = view.get<Components::Physics>(entity);
         auto& thrusting = view.get<Components::Thrusting>(entity);
+        auto& affiliation = view.get<Components::Affiliation>(entity);
 
         const float rotation_speed = physics.rotation;
         if (IsKeyDown(KEY_RIGHT)) {
@@ -200,7 +210,7 @@ void player_movement(
                 auto&weapon_transform = weapons.get<Components::Transform>(weapon_entity);
 
                 if (weapon.fire_timer.is_done()) {
-                    spawn_bullet(registry, asset_manager, weapon_transform, physics, weapon);
+                    spawn_bullet(registry, asset_manager, weapon_transform, physics, weapon, affiliation.id);
                     weapon.fire_timer.start(weapon.cooldown);
                 }
             };
@@ -381,9 +391,12 @@ entt::entity spawn_bullet(
     AssetManager& asset_manager,
     Components::Transform& transform,
     const Components::Physics& physics,
-    const Components::Weapon& weapon
+    const Components::Weapon& weapon,
+    const uint32_t affiliation
 ) {
     const entt::entity bullet = registry.create();
+
+    registry.emplace<Components::Affiliation>(bullet, affiliation);
 
     const float rotation_rad = transform.rotation * DEG2RAD;
     const raylib::Vector2 direction = {
@@ -512,6 +525,8 @@ entt::entity spawn_player_ship(
             0b10u
         );
 
+        registry.emplace<Components::Affiliation>(entity, 0u);
+
         // If the ship isn't found, there would be no weapons. Thus, only try spawning them when they might be present.
         for (const auto& weapon : (*ship)->weapons) {
             spawn_player_weapon(
@@ -582,7 +597,8 @@ entt::entity spawn_ship(
     entt::registry& registry,
     AssetManager& asset_manager,
     const std::string& key,
-    raylib::Vector2 position
+    raylib::Vector2 position,
+    uint32_t affiliation
 ) {
     const entt::entity entity = registry.create();
     auto ship = asset_manager.get_ship(key);
@@ -606,6 +622,8 @@ entt::entity spawn_ship(
             0b1u,
             0b10u
         );
+
+        registry.emplace<Components::Affiliation>(entity, affiliation);
 
         // If the ship can't be found, there will be no engines found, and thus it doesn't need to bloat engine processing.
         registry.emplace<Components::Thrusting>(entity, false);
