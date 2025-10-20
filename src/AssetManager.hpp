@@ -107,6 +107,19 @@ struct StartData {
     explicit StartData(const pugi::xml_document& d);
 };
 
+struct AffiliationData {
+    struct Relation {
+        std::string faction;
+        int32_t relation;
+    };
+
+    std::string name;
+    std::vector<Relation> relations;
+
+    explicit AffiliationData(const json& j);
+    explicit AffiliationData(const pugi::xml_document& d);
+};
+
 class AssetManager {
 public:
     ~AssetManager();

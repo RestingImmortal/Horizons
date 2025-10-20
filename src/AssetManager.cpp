@@ -152,6 +152,27 @@ StartData::StartData(const pugi::xml_document& d) {
     };
 }
 
+AffiliationData::AffiliationData(const json& j) {
+    name = j.at("name").get<std::string>();
+    for (auto relation : j["relations"]) {
+        relations.push_back({
+            relation.at("relation_name"),
+            relation.at("relation")
+        });
+    }
+}
+
+AffiliationData::AffiliationData(const pugi::xml_document& d) {
+    const auto root = d.child("AffiliationData");
+    name = root.child("name").text().as_string();
+    for (auto relation : root.children("relations")) {
+        relations.push_back({
+            .faction = relation.child("relation_name").text().as_string(),
+            .relation = relation.child("relation").text().as_int()
+        });
+    }
+}
+
 // Public Methods
 
 AssetManager::~AssetManager() {
