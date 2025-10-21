@@ -43,15 +43,15 @@ ShipData::ShipData(const json& j) {
     radius    = j.value("radius", 0.0f);
     for (const auto& item : j["weapons"]) {
         weapons.push_back({
-            item.at("type").get<std::string>(),
-            item.at("x").get<float>(),
-            item.at("y").get<float>()});
+            .weapon_type = item.at("type").get<std::string>(),
+            .x = item.at("x").get<float>(),
+            .y = item.at("y").get<float>()});
     }
     for (const auto& item : j["engines"]) {
         engines.push_back({
-            item.at("type").get<std::string>(),
-            item.at("x").get<float>(),
-            item.at("y").get<float>()
+            .engine_type = item.at("type").get<std::string>(),
+            .x = item.at("x").get<float>(),
+            .y = item.at("y").get<float>()
         });
     }
 }
@@ -63,16 +63,16 @@ ShipData::ShipData(const pugi::xml_document& d) {
     radius    = root.child("radius").text().as_float(0.0f);
     for (pugi::xml_node node : root.children("weapons")) {
         weapons.push_back({
-            node.child("type").text().as_string(),
-            node.child("x").text().as_float(),
-            node.child("y").text().as_float()
+            .weapon_type = node.child("type").text().as_string(),
+            .x = node.child("x").text().as_float(),
+            .y = node.child("y").text().as_float()
         });
     }
     for (pugi::xml_node node : root.children("engines")) {
         engines.push_back({
-            node.child("type").text().as_string(),
-            node.child("x").text().as_float(),
-            node.child("y").text().as_float()
+            .engine_type = node.child("type").text().as_string(),
+            .x = node.child("x").text().as_float(),
+            .y = node.child("y").text().as_float()
         });
     }
 }
@@ -82,24 +82,24 @@ MapData::MapData(const json& j) {
 
     for (const auto& item : j["backgrounds"]) {
         backgrounds.push_back({
-            item.at("image").get<std::string>(),
-            item.at("layer").get<int>()
+            .image = item.at("image").get<std::string>(),
+            .layer = item.at("layer").get<int>()
         });
     }
     for (const auto& item : j["ships"]) {
         ships.push_back({
-            item.at("type").get<std::string>(),
-            item.at("x").get<float>(),
-            item.at("y").get<float>(),
-            item.at("affiliation").get<uint32_t>()
+            .ship_type = item.at("type").get<std::string>(),
+            .x = item.at("x").get<float>(),
+            .y = item.at("y").get<float>(),
+            .affiliation = item.at("affiliation").get<uint32_t>()
         });
     }
     for (const auto& item : j["objects"]) {
         objects.push_back({
-            item.at("texture").get<std::string>(),
-            item.at("x").get<float>(),
-            item.at("y").get<float>(),
-            item.at("layer").get<int>()
+            .texture = item.at("texture").get<std::string>(),
+            .x = item.at("x").get<float>(),
+            .y = item.at("y").get<float>(),
+            .layer = item.at("layer").get<int>()
         });
     }
 }
@@ -109,24 +109,24 @@ MapData::MapData(const pugi::xml_document& d) {
     metadata = { root.child("meta").child("name").text().as_string() };
     for (pugi::xml_node node : root.children("backgrounds")) {
         backgrounds.push_back({
-            node.child("image").text().as_string(),
-            node.child("layer").text().as_int()
+            .image = node.child("image").text().as_string(),
+            .layer = node.child("layer").text().as_int()
         });
     }
     for (pugi::xml_node node : root.children("ships")) {
         ships.push_back({
-            node.child("type").text().as_string(),
-            node.child("x").text().as_float(),
-            node.child("y").text().as_float(),
-            node.child("affiliation").text().as_uint()
+            .ship_type = node.child("type").text().as_string(),
+            .x = node.child("x").text().as_float(),
+            .y = node.child("y").text().as_float(),
+            .affiliation = node.child("affiliation").text().as_uint()
         });
     }
     for (pugi::xml_node node : root.children("objects")) {
         objects.push_back({
-            node.child("texture").text().as_string(),
-            node.child("x").text().as_float(),
-            node.child("y").text().as_float(),
-            node.child("layer").text().as_int()
+            .texture = node.child("texture").text().as_string(),
+            .x = node.child("x").text().as_float(),
+            .y = node.child("y").text().as_float(),
+            .layer = node.child("layer").text().as_int()
         });
     }
 }
@@ -135,9 +135,9 @@ StartData::StartData(const json &j) {
     name = j.at("name").get<std::string>();
     initial_map = j.at("initial map").get<std::string>();
     player = {
-        j.at("player").at("ship_type").get<std::string>(),
-        j.at("player").at("x").get<float>(),
-        j.at("player").at("y").get<float>()
+        .ship_type = j.at("player").at("ship_type").get<std::string>(),
+        .x = j.at("player").at("x").get<float>(),
+        .y = j.at("player").at("y").get<float>()
     };
 }
 
@@ -146,9 +146,9 @@ StartData::StartData(const pugi::xml_document& d) {
     name = root.child("name").text().as_string();
     initial_map = root.child("initial map").text().as_string();
     player = {
-        root.child("player").child("ship_type").text().as_string(),
-        root.child("player").child("x").text().as_float(),
-        root.child("player").child("y").text().as_float()
+        .ship_type = root.child("player").child("ship_type").text().as_string(),
+        .x = root.child("player").child("x").text().as_float(),
+        .y = root.child("player").child("y").text().as_float()
     };
 }
 
@@ -156,8 +156,8 @@ AffiliationData::AffiliationData(const json& j) {
     name = j.at("name").get<std::string>();
     for (auto relation : j["relations"]) {
         relations.push_back({
-            relation.at("relation_name"),
-            relation.at("relation")
+            .faction = relation.at("relation_name"),
+            .relation = relation.at("relation")
         });
     }
 }
