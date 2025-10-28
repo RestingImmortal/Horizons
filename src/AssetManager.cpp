@@ -324,6 +324,32 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
+        } else if (is_affiliation_file(entry)) {
+            std::string key = get_affiliation_name(entry);
+
+            if (is_xml(entry)) {
+                pugi::xml_document doc;
+
+                if (
+                    pugi::xml_parse_result result = doc.load_file(entry.path().c_str());
+                    !result
+                ) {
+                    H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), result.description());
+                    continue;
+                }
+
+                m_raw_affiliations.emplace_back(AffiliationData(doc));
+                H_INFO("Asset Loader", "Loaded Raw Affiliation: {}", key);
+            } else if (is_json(entry)) {
+                try {
+                    std::ifstream file(entry.path());
+                    json jsonData = json::parse(file);
+                    m_raw_affiliations.emplace_back(AffiliationData(jsonData));
+                    H_INFO("Asset Loader", "Loaded Raw Affiliation: {}", key);
+                } catch (const std::exception& e) {
+                    H_ERROR("AssetLoader", "Error loading {}: {}", entry.path().string(), e.what());
+                }
+            }
         } else if (is_texture_file(entry)) {
             std::string name = get_texture_name(entry);
             m_textures.emplace_back(entry.path().string());
@@ -420,6 +446,12 @@ bool AssetManager::is_start_file(const std::filesystem::directory_entry &entry) 
           entry.path().stem().extension() == ".start";
 }
 
+bool AssetManager::is_affiliation_file(const std::filesystem::directory_entry &entry) {
+     return entry.is_regular_file() &&
+         (is_xml(entry) || is_json(entry)) &&
+         entry.path().stem().extension() == ".affiliation";
+}
+
 bool AssetManager::is_texture_file(const std::filesystem::directory_entry& entry) {
     return entry.is_regular_file() && is_png(entry);
 }
@@ -441,6 +473,10 @@ std::string AssetManager::get_map_name(const std::filesystem::directory_entry &e
 }
 
 std::string AssetManager::get_start_name(const std::filesystem::directory_entry &entry) {
+    return entry.path().stem().stem().string();
+}
+
+std::string AssetManager::get_affiliation_name(const std::filesystem::directory_entry &entry) {
     return entry.path().stem().stem().string();
 }
 

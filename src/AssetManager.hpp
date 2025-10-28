@@ -144,6 +144,10 @@ private:
     std::unordered_map<std::string, EngineData> m_engine_assets;
     std::unordered_map<std::string, MapData> m_map_assets;
     std::unordered_map<std::string, StartData> m_start_assets;
+    std::vector<AffiliationData> m_raw_affiliations;
+    std::unordered_map<std::string, int> m_faction_name_to_id;
+    std::vector<std::string> m_faction_id_to_name;
+    std::vector<std::vector<int>> m_relation_table;
     std::vector<raylib::TextureUnmanaged> m_textures;
     std::unordered_map<std::string, size_t> m_texture_map;
 
@@ -165,6 +169,8 @@ private:
 
     static bool is_start_file(const std::filesystem::directory_entry& entry);
 
+    static bool is_affiliation_file(const std::filesystem::directory_entry& entry);
+
     static std::string get_ship_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_weapon_name(const std::filesystem::directory_entry& entry);
@@ -174,6 +180,8 @@ private:
     static std::string get_map_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_start_name(const std::filesystem::directory_entry& entry);
+
+    static std::string get_affiliation_name(const std::filesystem::directory_entry& entry);
 
     static std::string get_texture_name(const std::filesystem::directory_entry& entry);
 
