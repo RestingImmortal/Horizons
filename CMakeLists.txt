@@ -44,7 +44,7 @@ FetchContent_MakeAvailable(EnTT)
 set(PROJECT_EXECUTABLE_NAME "game")
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
 
 # Recursively find all .cpp files in the src directory
 file(GLOB_RECURSE SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
