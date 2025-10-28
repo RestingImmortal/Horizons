@@ -66,5 +66,11 @@ else()
     target_compile_options(${PROJECT_EXECUTABLE_NAME} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
-target_link_libraries(${PROJECT_EXECUTABLE_NAME} PUBLIC raylib raylib_cpp nlohmann_json::nlohmann_json EnTT::EnTT pugixml::pugixml)
-
+target_link_libraries(
+        ${PROJECT_EXECUTABLE_NAME} PUBLIC
+        raylib
+        raylib_cpp
+        nlohmann_json::nlohmann_json
+        EnTT::EnTT
+        pugixml::pugixml
+)
