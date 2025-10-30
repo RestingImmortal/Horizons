@@ -338,13 +338,13 @@ void AssetManager::load_assets() {
                     continue;
                 }
 
-                m_raw_affiliations.emplace_back(AffiliationData(doc));
+                m_raw_affiliations.emplace_back(doc);
                 H_INFO("Asset Loader", "Loaded Raw Affiliation: {}", key);
             } else if (is_json(entry)) {
                 try {
                     std::ifstream file(entry.path());
                     json jsonData = json::parse(file);
-                    m_raw_affiliations.emplace_back(AffiliationData(jsonData));
+                    m_raw_affiliations.emplace_back(jsonData);
                     H_INFO("Asset Loader", "Loaded Raw Affiliation: {}", key);
                 } catch (const std::exception& e) {
                     H_ERROR("AssetLoader", "Error loading {}: {}", entry.path().string(), e.what());
