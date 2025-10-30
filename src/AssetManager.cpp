@@ -190,8 +190,8 @@ void AssetManager::load_assets() {
     }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(assets_dir)) {
-        if (is_start_file(entry)) {
-            std::string start_name = get_start_name(entry);
+        if (is_of_asset_type(entry, "start")) {
+            std::string start_name = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -218,8 +218,8 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
-        } else if (is_map_file(entry)) {
-            std::string map_name = get_map_name(entry);
+        } else if (is_of_asset_type(entry, "map")) {
+            std::string map_name = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -246,8 +246,8 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
-        } else if (is_engine_file(entry)) {
-            std::string key = get_engine_name(entry);
+        } else if (is_of_asset_type(entry, "engine")) {
+            std::string key = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -272,8 +272,8 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
-        } else if (is_weapon_file(entry)) {
-            std::string key = get_weapon_name(entry);
+        } else if (is_of_asset_type(entry, "weapon")) {
+            std::string key = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -298,8 +298,8 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
-        } else if (is_ship_file(entry)) {
-            std::string key = get_ship_name(entry);
+        } else if (is_of_asset_type(entry, "ship")) {
+            std::string key = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -324,8 +324,8 @@ void AssetManager::load_assets() {
                     H_ERROR("Asset Loader", "Error loading {}: {}", entry.path().string(), e.what());
                 }
             }
-        } else if (is_affiliation_file(entry)) {
-            std::string key = get_affiliation_name(entry);
+        } else if (is_of_asset_type(entry, "affiliation")) {
+            std::string key = get_asset_name_from_filename(entry);
 
             if (is_xml(entry)) {
                 pugi::xml_document doc;
@@ -416,67 +416,17 @@ bool AssetManager::is_png(const std::filesystem::directory_entry& entry) {
     return entry.path().extension() == ".png";
 }
 
-bool AssetManager::is_ship_file(const std::filesystem::directory_entry& entry) {
+bool AssetManager::is_of_asset_type(const std::filesystem::directory_entry &entry, const std::string& asset_type) {
     return entry.is_regular_file() &&
-           (is_xml(entry) || is_json(entry)) &&
-           entry.path().stem().extension() == ".ship";
-}
-
-bool AssetManager::is_weapon_file(const std::filesystem::directory_entry& entry) {
-    return entry.is_regular_file() &&
-           (is_xml(entry) || is_json(entry)) &&
-           entry.path().stem().extension() == ".weapon";
-}
-
-bool AssetManager::is_engine_file(const std::filesystem::directory_entry& entry) {
-    return entry.is_regular_file() &&
-           (is_xml(entry) || is_json(entry)) &&
-           entry.path().stem().extension() == ".engine";
-}
-
-bool AssetManager::is_map_file(const std::filesystem::directory_entry& entry) {
-    return entry.is_regular_file() &&
-           (is_xml(entry) || is_json(entry)) &&
-           entry.path().stem().extension() == ".map";
-}
-
-bool AssetManager::is_start_file(const std::filesystem::directory_entry &entry) {
-    return entry.is_regular_file() &&
-          (is_xml(entry) || is_json(entry)) &&
-          entry.path().stem().extension() == ".start";
-}
-
-bool AssetManager::is_affiliation_file(const std::filesystem::directory_entry &entry) {
-     return entry.is_regular_file() &&
-         (is_xml(entry) || is_json(entry)) &&
-         entry.path().stem().extension() == ".affiliation";
+        (is_xml(entry) || is_json(entry)) &&
+        entry.path().stem().extension() == ('.' + asset_type);
 }
 
 bool AssetManager::is_texture_file(const std::filesystem::directory_entry& entry) {
     return entry.is_regular_file() && is_png(entry);
 }
 
-std::string AssetManager::get_ship_name(const std::filesystem::directory_entry& entry) {
-    return entry.path().stem().stem().string();
-}
-
-std::string AssetManager::get_weapon_name(const std::filesystem::directory_entry& entry) {
-    return entry.path().stem().stem().string();
-}
-
-std::string AssetManager::get_engine_name(const std::filesystem::directory_entry& entry) {
-    return entry.path().stem().stem().string();
-}
-
-std::string AssetManager::get_map_name(const std::filesystem::directory_entry &entry) {
-    return entry.path().stem().stem().string();
-}
-
-std::string AssetManager::get_start_name(const std::filesystem::directory_entry &entry) {
-    return entry.path().stem().stem().string();
-}
-
-std::string AssetManager::get_affiliation_name(const std::filesystem::directory_entry &entry) {
+std::string AssetManager::get_asset_name_from_filename(const std::filesystem::directory_entry& entry) {
     return entry.path().stem().stem().string();
 }
 

@@ -157,31 +157,11 @@ private:
 
     static bool is_png(const std::filesystem::directory_entry& entry);
 
-    static bool is_ship_file(const std::filesystem::directory_entry& entry);
-
-    static bool is_weapon_file(const std::filesystem::directory_entry& entry);
-
-    static bool is_engine_file(const std::filesystem::directory_entry& entry);
-
     static bool is_texture_file(const std::filesystem::directory_entry& entry);
 
-    static bool is_map_file(const std::filesystem::directory_entry& entry);
+    static bool is_of_asset_type(const std::filesystem::directory_entry& entry, const std::string& asset_type);
 
-    static bool is_start_file(const std::filesystem::directory_entry& entry);
-
-    static bool is_affiliation_file(const std::filesystem::directory_entry& entry);
-
-    static std::string get_ship_name(const std::filesystem::directory_entry& entry);
-
-    static std::string get_weapon_name(const std::filesystem::directory_entry& entry);
-
-    static std::string get_engine_name(const std::filesystem::directory_entry& entry);
-
-    static std::string get_map_name(const std::filesystem::directory_entry& entry);
-
-    static std::string get_start_name(const std::filesystem::directory_entry& entry);
-
-    static std::string get_affiliation_name(const std::filesystem::directory_entry& entry);
+    static std::string get_asset_name_from_filename(const std::filesystem::directory_entry& entry);
 
     static std::string get_texture_name(const std::filesystem::directory_entry& entry);
 
