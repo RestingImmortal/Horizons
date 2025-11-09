@@ -357,6 +357,47 @@ void AssetManager::load_assets() {
             H_INFO("Asset Loader", "Loaded Texture: {}", name);
         }
     }
+
+    // Post initial load processing
+
+    std::size_t faction_count = m_raw_affiliations.size();
+
+    // Map names to IDs
+    m_faction_id_to_name.reserve(faction_count);
+    m_faction_name_to_id.reserve(faction_count);
+
+    for (std::size_t id = 0; id < faction_count; id++) {
+        const auto& affiliation = m_raw_affiliations[id];
+
+        m_faction_id_to_name.push_back(affiliation.name);
+        m_faction_name_to_id.emplace(affiliation.name, id);
+
+        H_INFO("Asset Loader", "Gave faction '{}' id {}", affiliation.name, id);
+    }
+
+    // Create NxN relation table initialized to 0
+    m_relation_table.assign(faction_count, std::vector<int>(faction_count, 0));
+
+    // Populate sparse relations
+    for (std::size_t source_id = 0; source_id < faction_count; source_id++) {
+        for (
+            const auto& source_affiliation = m_raw_affiliations[source_id];
+            const auto& relation_entry : source_affiliation.relations
+        ) {
+            const std::string& target_name = relation_entry.faction;
+
+            auto target_iter = m_faction_name_to_id.find(target_name);
+            if (target_iter == m_faction_name_to_id.end()) {
+                throw std::runtime_error(std::format(
+                    "Faction '{}' has relation toward unknown faction '{}'",
+                    source_affiliation.name, target_name
+                ));
+            }
+
+            std::size_t target_id = target_iter->second;
+            m_relation_table[source_id][target_id] = relation_entry.relation;
+        }
+    }
 }
 
 std::expected<const ShipData*, std::string> AssetManager::get_ship(const std::string& name) const {
