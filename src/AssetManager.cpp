@@ -91,7 +91,7 @@ MapData::MapData(const json& j) {
             .ship_type = item.at("type").get<std::string>(),
             .x = item.at("x").get<float>(),
             .y = item.at("y").get<float>(),
-            .affiliation = item.at("affiliation").get<uint32_t>()
+            .affiliation = item.at("affiliation").get<std::string>()
         });
     }
     for (const auto& item : j["objects"]) {
@@ -118,7 +118,7 @@ MapData::MapData(const pugi::xml_document& d) {
             .ship_type = node.child("type").text().as_string(),
             .x = node.child("x").text().as_float(),
             .y = node.child("y").text().as_float(),
-            .affiliation = node.child("affiliation").text().as_uint()
+            .affiliation = node.child("affiliation").text().as_string()
         });
     }
     for (pugi::xml_node node : root.children("objects")) {
@@ -441,6 +441,13 @@ raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     }
     H_ERROR("Asset Loader", "Could not find texture: {}", name);
     return get_error_texture();
+}
+
+std::expected<const uint32_t, std::string>AssetManager::get_faction_id(const std::string& name) const {
+    if (const auto it = m_faction_name_to_id.find(name); it != m_faction_name_to_id.end()) {
+        return it->second;
+    }
+    return std::unexpected("Affiliation '" + name +"' not assigned an id");
 }
 
 // Private methods

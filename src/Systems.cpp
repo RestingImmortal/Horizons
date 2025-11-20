@@ -71,13 +71,20 @@ void load_map(
         }
 
         for (const auto& ship : map_data->ships) {
-            spawn_ship(
-                registry,
-                asset_manager,
-                ship.ship_type,
-                raylib::Vector2{ship.x, ship.y},
-                ship.affiliation
-            );
+            if (
+                auto affiliation_result = asset_manager.get_faction_id(ship.affiliation);
+                !affiliation_result
+            ) {
+                H_WARNING("load_map", "{}: {}", key, affiliation_result.error());
+            } else {
+                spawn_ship(
+                    registry,
+                    asset_manager,
+                    ship.ship_type,
+                    raylib::Vector2{ship.x, ship.y},
+                    *affiliation_result
+                );
+            }
         }
 
         for (const auto& object : map_data->objects) {
@@ -525,7 +532,14 @@ entt::entity spawn_player_ship(
             0b10u
         );
 
-        registry.emplace<Components::Affiliation>(entity, 0u);
+        if (
+            auto affiliation_result = asset_manager.get_faction_id("Player");
+            ! affiliation_result
+        ) {
+            H_ERROR("spawn_player_ship", "Could not give player affiliation: {}", affiliation_result.error());
+        } else {
+            registry.emplace<Components::Affiliation>(entity, *affiliation_result);
+        }
 
         // If the ship isn't found, there would be no weapons. Thus, only try spawning them when they might be present.
         for (const auto& weapon : (*ship)->weapons) {

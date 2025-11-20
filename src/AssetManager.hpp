@@ -73,7 +73,7 @@ struct MapData {
         std::string ship_type;
         float x;
         float y;
-        uint32_t affiliation;
+        std::string affiliation;
     };
 
     struct ObjectMapData {
@@ -137,6 +137,8 @@ public:
     std::expected<const StartData*, std::string>get_start(const std::string& name) const;
 
     raylib::TextureUnmanaged& get_texture(const std::string& name);
+
+    std::expected<const uint32_t, std::string>get_faction_id(const std::string& name) const;
 
 private:
     std::unordered_map<std::string, ShipData> m_ship_assets;
