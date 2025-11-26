@@ -126,21 +126,29 @@ public:
 
     void load_assets();
 
+    [[nodiscard]]
     std::expected<const ShipData*, std::string> get_ship(const std::string& name) const;
 
+    [[nodiscard]]
     std::expected<const WeaponData*, std::string> get_weapon(const std::string& name) const;
 
+    [[nodiscard]]
     std::expected<const EngineData*, std::string> get_engine(const std::string& name) const;
 
+    [[nodiscard]]
     std::expected<const MapData*, std::string> get_map(const std::string& name) const;
 
+    [[nodiscard]]
     std::expected<const StartData*, std::string>get_start(const std::string& name) const;
 
+    [[nodiscard]]
     raylib::TextureUnmanaged& get_texture(const std::string& name);
 
+    [[nodiscard]]
     std::expected<const uint32_t, std::string>get_faction_id(const std::string& name) const;
 
-    std::expected<const int, std::string>get_relation(const uint32_t base_faction, const uint32_t sub_faction) const;
+    [[nodiscard]]
+    std::expected<const int, std::string>get_relation(uint32_t base_faction, uint32_t sub_faction) const;
 
 private:
     std::unordered_map<std::string, ShipData> m_ship_assets;

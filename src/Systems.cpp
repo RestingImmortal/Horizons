@@ -49,9 +49,9 @@ void engine_visibility(entt::registry &registry) {
 }
 
 void load_map(
-    entt::registry &registry,
-    AssetManager &asset_manager,
-    const std::string &key
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key
 ) {
     if (
         auto map_result = asset_manager.get_map(key);
@@ -100,9 +100,9 @@ void load_map(
 }
 
 void load_start(
-    entt::registry &registry,
-    AssetManager &asset_manager,
-    const std::string &key
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key
 ) {
     if (
         auto start_result = asset_manager.get_start(key);
@@ -391,9 +391,9 @@ void render_sprites(entt::registry& registry) {
 }
 
 entt::entity spawn_background(
-    entt::registry &registry,
-    AssetManager &asset_manager,
-    const std::string &key,
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    const std::string& key,
     int layer
 ) {
     const entt::entity entity = registry.create();
@@ -703,7 +703,7 @@ entt::entity spawn_weapon(
     return weapon_entity;
 }
 
-void update_background_position(entt::registry &registry) {
+void update_background_position(entt::registry& registry) {
     for (
         const auto player_view = registry.view<Components::Transform, Components::Player>();
         const auto player_entity : player_view
@@ -720,7 +720,7 @@ void update_background_position(entt::registry &registry) {
 }
 
 void update_bullet_timers(
-    entt::registry &registry,
+    entt::registry& registry,
     const float dt
 ) {
     for (
@@ -795,7 +795,7 @@ void update_physics_transforms(
 
 void update_weapon_timers(
     entt::registry& registry,
-    float dt
+    const float dt
 ) {
     for (
         const auto view = registry.view<Components::Weapon>();

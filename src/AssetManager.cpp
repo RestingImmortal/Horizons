@@ -401,6 +401,7 @@ void AssetManager::load_assets() {
     }
 }
 
+[[nodiscard]]
 std::expected<const ShipData*, std::string> AssetManager::get_ship(const std::string& name) const {
     if (const auto it = m_ship_assets.find(name); it != m_ship_assets.end()) {
         return &it->second;
@@ -408,6 +409,7 @@ std::expected<const ShipData*, std::string> AssetManager::get_ship(const std::st
     return std::unexpected("Ship '" + name + "' not found");
 }
 
+[[nodiscard]]
 std::expected<const WeaponData*, std::string> AssetManager::get_weapon(const std::string& name) const {
     if (const auto it = m_weapon_assets.find(name); it != m_weapon_assets.end()) {
         return &it->second;
@@ -415,6 +417,7 @@ std::expected<const WeaponData*, std::string> AssetManager::get_weapon(const std
     return std::unexpected("Weapon '" + name + "' not found");
 }
 
+[[nodiscard]]
 std::expected<const EngineData*, std::string> AssetManager::get_engine(const std::string& name) const {
     if (const auto it = m_engine_assets.find(name); it != m_engine_assets.end()) {
         return &it->second;
@@ -422,6 +425,7 @@ std::expected<const EngineData*, std::string> AssetManager::get_engine(const std
     return std::unexpected("Engine '" + name + "' not found");
 }
 
+[[nodiscard]]
 std::expected<const MapData*, std::string> AssetManager::get_map(const std::string& name) const {
     if (const auto it = m_map_assets.find(name); it != m_map_assets.end()) {
         return &it->second;
@@ -429,6 +433,7 @@ std::expected<const MapData*, std::string> AssetManager::get_map(const std::stri
     return std::unexpected("Map '" + name + "' not found");
 }
 
+[[nodiscard]]
 std::expected<const StartData *, std::string> AssetManager::get_start(const std::string &name) const {
     if (const auto it = m_start_assets.find(name); it != m_start_assets.end()) {
         return &it->second;
@@ -436,6 +441,7 @@ std::expected<const StartData *, std::string> AssetManager::get_start(const std:
     return std::unexpected("Start '" + name + "' not found");
 }
 
+[[nodiscard]]
 raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     if (const auto it = m_texture_map.find(name); it != m_texture_map.end()) {
         return m_textures[it->second];
@@ -444,6 +450,7 @@ raylib::TextureUnmanaged& AssetManager::get_texture(const std::string& name) {
     return get_error_texture();
 }
 
+[[nodiscard]]
 std::expected<const uint32_t, std::string>AssetManager::get_faction_id(const std::string& name) const {
     if (const auto it = m_faction_name_to_id.find(name); it != m_faction_name_to_id.end()) {
         return it->second;
@@ -451,6 +458,7 @@ std::expected<const uint32_t, std::string>AssetManager::get_faction_id(const std
     return std::unexpected("Affiliation '" + name +"' not assigned an id");
 }
 
+[[nodiscard]]
 std::expected<const int, std::string> AssetManager::get_relation(const uint32_t base_faction, const uint32_t sub_faction) const {
     if (base_faction >= m_relation_table.size()) {
         return std::unexpected(
