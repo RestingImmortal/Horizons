@@ -140,6 +140,8 @@ public:
 
     std::expected<const uint32_t, std::string>get_faction_id(const std::string& name) const;
 
+    std::expected<const int, std::string>get_relation(const uint32_t base_faction, const uint32_t sub_faction) const;
+
 private:
     std::unordered_map<std::string, ShipData> m_ship_assets;
     std::unordered_map<std::string, WeaponData> m_weapon_assets;

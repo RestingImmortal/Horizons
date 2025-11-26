@@ -3,6 +3,7 @@
 #include "AssetManager.hpp"
 
 #include <filesystem>
+#include <format>
 #include <fstream>
 
 #include "Logger.hpp"
@@ -448,6 +449,25 @@ std::expected<const uint32_t, std::string>AssetManager::get_faction_id(const std
         return it->second;
     }
     return std::unexpected("Affiliation '" + name +"' not assigned an id");
+}
+
+std::expected<const int, std::string> AssetManager::get_relation(const uint32_t base_faction, const uint32_t sub_faction) const {
+    if (base_faction >= m_relation_table.size()) {
+        return std::unexpected(
+            std::format("Base Faction Index {} is out of bounds ({})", base_faction, m_relation_table.size())
+        );
+    }
+
+    if (
+        const auto& sub = m_relation_table[base_faction];
+        sub_faction >= sub.size()
+    ) {
+        return std::unexpected(
+            std::format("Sub Faction Index {} is out of bounds for Base {} ({})", sub_faction, base_faction, sub.size())
+        );
+    }
+
+    return m_relation_table[base_faction][sub_faction];
 }
 
 // Private methods
