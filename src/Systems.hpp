@@ -39,6 +39,7 @@ void mark_bullets_for_despawn(
 
 void on_collision(
     entt::registry& registry,
+    const AssetManager& asset_manager,
     const Events::Collision& event
 );
 

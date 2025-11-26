@@ -137,11 +137,29 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
-void on_collision(entt::registry& registry, const Events::Collision& event) {
+void on_collision(
+    entt::registry& registry,
+    const AssetManager& asset_manager,
+    const Events::Collision& event
+) {
     if (const auto a_affiliation = registry.try_get<Components::Affiliation>(event.a)) {
         if (const auto b_affiliation = registry.try_get<Components::Affiliation>(event.b)) {
-            if (a_affiliation->id != b_affiliation->id) {
-                H_INFO("Collision", "[{}] and [{}]", static_cast<uint32_t>(event.a), static_cast<uint32_t>(event.b));
+            if (
+                const auto relation_result = asset_manager.get_relation(a_affiliation->id, b_affiliation->id);
+                !relation_result
+            ) {
+                H_WARNING("Collision", "{}", relation_result.error());
+            } else {
+                if (
+                    const auto relation_inverse_result = asset_manager.get_relation(b_affiliation->id, a_affiliation->id);
+                    !relation_inverse_result
+                ) {
+                    H_WARNING("Collision", "{}", relation_inverse_result.error());
+                } else {
+                    if (*relation_result < 0 || *relation_inverse_result < 0) {
+                        H_INFO("Collision", "With values of ({},{})", *relation_result, *relation_inverse_result);
+                    }
+                }
             }
         }
     }
@@ -234,7 +252,7 @@ void print_engine(
         const auto engine_result = asset_manager.get_engine(engine);
         !engine_result
     ) {
-        H_DEBUG("Assett Printer", "Engine '{}' not found", engine);
+        H_DEBUG("Asset Printer", "Engine '{}' not found", engine);
     } else {
         const std::string indent(indentation_level, '-');
 

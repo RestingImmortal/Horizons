@@ -6,6 +6,8 @@
 #include <raylib-cpp.hpp>
 
 #include "AssetManager.hpp"
+#include "Events.hpp"
+#include "Systems.hpp"
 
 class Game {
 public:
@@ -36,4 +38,9 @@ private:
     void render();
 
     void setup_event_handlers();
+
+    void handle_collision(const Events::Collision& event) {
+        on_collision(m_registry, m_asset_manager, event);
+
+    }
 };
