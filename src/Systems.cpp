@@ -132,7 +132,7 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     ) {
         if (auto& bullet = registry.get<Components::Bullet>(entity);
             bullet.despawn_timer.is_done()) {
-            registry.emplace<Components::DespawnMarker>(entity);
+            registry.emplace_or_replace<Components::DespawnMarker>(entity);
         }
     }
 }
@@ -158,6 +158,16 @@ void on_collision(
                 } else {
                     if (*relation_result < 0 || *relation_inverse_result < 0) {
                         H_INFO("Collision", "With values of ({},{})", *relation_result, *relation_inverse_result);
+
+                        if (registry.try_get<Components::Bullet>(event.a)) {
+                            if (!registry.try_get<Components::Bullet>(event.b)) {
+                                registry.emplace_or_replace<Components::DespawnMarker>(event.a);
+                            }
+                        } else if (registry.try_get<Components::Bullet>(event.b)) {
+                            if (!registry.try_get<Components::Bullet>(event.a)) {
+                                registry.emplace_or_replace<Components::DespawnMarker>(event.b);
+                            }
+                        }
                     }
                 }
             }
