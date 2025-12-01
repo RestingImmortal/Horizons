@@ -9,6 +9,7 @@
 
 #include "AssetManager.hpp"
 #include "Components.hpp"
+#include "Functions.hpp"
 #include "Logger.hpp"
 #include "Timer.hpp"
 
@@ -137,6 +138,7 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
+// TODO: Refactor this. It needs it so bad.
 void on_collision(
     entt::registry& registry,
     const AssetManager& asset_manager,
@@ -162,10 +164,50 @@ void on_collision(
                         if (registry.try_get<Components::Bullet>(event.a)) {
                             if (!registry.try_get<Components::Bullet>(event.b)) {
                                 registry.emplace_or_replace<Components::DespawnMarker>(event.a);
+
+                                const auto* a_transform = registry.try_get<Components::Transform>(event.a);
+                                const auto* b_transform = registry.try_get<Components::Transform>(event.b);
+
+                                switch (calculate_direction(*b_transform, *a_transform)) {
+                                    case HitQuadrant::Front: {
+                                        H_INFO("Collision", "Front!");
+                                        break;
+                                    }
+                                    case HitQuadrant::Right: {
+                                        H_INFO("Collision", "Right!");
+                                        break;
+                                    }
+                                    case HitQuadrant::Back: {
+                                        H_INFO("Collision", "Back!");
+                                        break;
+                                    }
+                                    case HitQuadrant::Left: {
+                                        H_INFO("Collision", "Left!");
+                                        break;
+                                    }
+                                }
                             }
                         } else if (registry.try_get<Components::Bullet>(event.b)) {
                             if (!registry.try_get<Components::Bullet>(event.a)) {
                                 registry.emplace_or_replace<Components::DespawnMarker>(event.b);
+
+                                const auto* a_transform = registry.try_get<Components::Transform>(event.a);
+                                const auto* b_transform = registry.try_get<Components::Transform>(event.b);
+
+                                switch (calculate_direction(*a_transform, *b_transform)) {
+                                    case HitQuadrant::Front: {
+                                        H_INFO("Collision", "Front!");
+                                    }
+                                    case HitQuadrant::Right: {
+                                        H_INFO("Collision", "Right!");
+                                    }
+                                    case HitQuadrant::Back: {
+                                        H_INFO("Collision", "Back!");
+                                    }
+                                    case HitQuadrant::Left: {
+                                        H_INFO("Collision", "Left!");
+                                    }
+                                }
                             }
                         }
                     }
@@ -666,6 +708,12 @@ entt::entity spawn_ship(
         );
 
         registry.emplace<Components::Affiliation>(entity, affiliation);
+
+        auto& hull = registry.emplace<Components::HullHealth>(entity);
+        hull.hull_front = 400.0f;
+        hull.hull_right = 400.0f;
+        hull.hull_back  = 400.0f;
+        hull.hull_left  = 400.0f;
 
         // If the ship can't be found, there will be no engines found, and thus it doesn't need to bloat engine processing.
         registry.emplace<Components::Thrusting>(entity, false);

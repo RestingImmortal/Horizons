@@ -11,6 +11,8 @@
 #include "Timer.hpp"
 
 namespace Components {
+    struct Transform;
+
     struct Affiliation {
         uint32_t id;
     };
@@ -33,6 +35,13 @@ namespace Components {
 
     struct Engine {
         float thrust = 20.0f;
+    };
+
+    struct HullHealth {
+        float hull_front = 1.0f;
+        float hull_right = 1.0f;
+        float hull_back = 1.0f;
+        float hull_left = 1.0f;
     };
 
     struct Parent {
