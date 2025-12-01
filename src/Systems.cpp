@@ -138,86 +138,61 @@ void mark_bullets_for_despawn(entt::registry &registry) {
     }
 }
 
-// TODO: Refactor this. It needs it so bad.
 void on_collision(
     entt::registry& registry,
     const AssetManager& asset_manager,
     const Events::Collision& event
 ) {
-    if (const auto a_affiliation = registry.try_get<Components::Affiliation>(event.a)) {
-        if (const auto b_affiliation = registry.try_get<Components::Affiliation>(event.b)) {
-            if (
-                const auto relation_result = asset_manager.get_relation(a_affiliation->id, b_affiliation->id);
-                !relation_result
-            ) {
-                H_WARNING("Collision", "{}", relation_result.error());
-            } else {
-                if (
-                    const auto relation_inverse_result = asset_manager.get_relation(b_affiliation->id, a_affiliation->id);
-                    !relation_inverse_result
-                ) {
-                    H_WARNING("Collision", "{}", relation_inverse_result.error());
-                } else {
-                    if (*relation_result < 0 || *relation_inverse_result < 0) {
-                        H_INFO("Collision", "With values of ({},{})", *relation_result, *relation_inverse_result);
+    const auto* a_affiliation = registry.try_get<Components::Affiliation>(event.a);
+    const auto* b_affiliation = registry.try_get<Components::Affiliation>(event.b);
 
-                        if (registry.try_get<Components::Bullet>(event.a)) {
-                            if (!registry.try_get<Components::Bullet>(event.b)) {
-                                registry.emplace_or_replace<Components::DespawnMarker>(event.a);
+    if (!a_affiliation || !b_affiliation) {
+        return;
+    }
 
-                                const auto* a_transform = registry.try_get<Components::Transform>(event.a);
-                                const auto* b_transform = registry.try_get<Components::Transform>(event.b);
+    const auto relation_ab = asset_manager.get_relation(a_affiliation->id, b_affiliation->id);
+    if (!relation_ab) {
+        H_WARNING("Collision", "{}", relation_ab.error());
+        return;
+    }
 
-                                switch (calculate_direction(*b_transform, *a_transform)) {
-                                    case HitQuadrant::Front: {
-                                        H_INFO("Collision", "Front!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Right: {
-                                        H_INFO("Collision", "Right!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Back: {
-                                        H_INFO("Collision", "Back!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Left: {
-                                        H_INFO("Collision", "Left!");
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (registry.try_get<Components::Bullet>(event.b)) {
-                            if (!registry.try_get<Components::Bullet>(event.a)) {
-                                registry.emplace_or_replace<Components::DespawnMarker>(event.b);
+    const auto relation_ba = asset_manager.get_relation(b_affiliation->id, a_affiliation->id);
+    if (!relation_ba) {
+        H_WARNING("Collision", "{}", relation_ba.error());
+        return;
+    }
 
-                                const auto* a_transform = registry.try_get<Components::Transform>(event.a);
-                                const auto* b_transform = registry.try_get<Components::Transform>(event.b);
+    if (*relation_ab >= 0 && *relation_ba >= 0) {
+        return;
+    }
 
-                                switch (calculate_direction(*a_transform, *b_transform)) {
-                                    case HitQuadrant::Front: {
-                                        H_INFO("Collision", "Front!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Right: {
-                                        H_INFO("Collision", "Right!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Back: {
-                                        H_INFO("Collision", "Back!");
-                                        break;
-                                    }
-                                    case HitQuadrant::Left: {
-                                        H_INFO("Collision", "Left!");
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    H_INFO("Collision", "With values of ({},{})", *relation_ab, *relation_ba);
+
+    const bool a_is_bullet = registry.all_of<Components::Bullet>(event.a);
+    const bool b_is_bullet = registry.all_of<Components::Bullet>(event.b);
+
+    if (a_is_bullet == b_is_bullet) {
+        return;
+    }
+
+    const auto [bullet_entity, target_entity] = a_is_bullet
+        ? std::pair{event.a, event.b}
+        : std::pair{event.b, event.a};
+
+    registry.emplace_or_replace<Components::DespawnMarker>(bullet_entity);
+
+    const auto* bullet_transform = registry.try_get<Components::Transform>(bullet_entity);
+    const auto* target_transform = registry.try_get<Components::Transform>(target_entity);
+
+    if (!bullet_transform || !target_transform) {
+        return;
+    }
+
+    switch (calculate_direction(*target_transform, *bullet_transform)) {
+        case HitQuadrant::Front: H_INFO("Collision", "Front!"); break;
+        case HitQuadrant::Right: H_INFO("Collision", "Right!"); break;
+        case HitQuadrant::Back:  H_INFO("Collision", "Back!");  break;
+        case HitQuadrant::Left:  H_INFO("Collision", "Left!");  break;
     }
 }
 
