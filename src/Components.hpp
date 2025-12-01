@@ -11,7 +11,6 @@
 #include "Timer.hpp"
 
 namespace Components {
-    struct Transform;
 
     struct Affiliation {
         uint32_t id;

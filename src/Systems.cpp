@@ -197,15 +197,19 @@ void on_collision(
                                 switch (calculate_direction(*a_transform, *b_transform)) {
                                     case HitQuadrant::Front: {
                                         H_INFO("Collision", "Front!");
+                                        break;
                                     }
                                     case HitQuadrant::Right: {
                                         H_INFO("Collision", "Right!");
+                                        break;
                                     }
                                     case HitQuadrant::Back: {
                                         H_INFO("Collision", "Back!");
+                                        break;
                                     }
                                     case HitQuadrant::Left: {
                                         H_INFO("Collision", "Left!");
+                                        break;
                                     }
                                 }
                             }
