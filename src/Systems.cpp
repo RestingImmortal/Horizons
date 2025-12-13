@@ -740,6 +740,34 @@ entt::entity spawn_weapon(
     return weapon_entity;
 }
 
+void update_animations(
+    entt::registry &registry,
+    AssetManager &asset_manager,
+    const float dt
+) {
+    for (
+        const auto view = registry.view<Components::Renderable, Components::Animation>();
+        const auto entity : view
+    ) {
+        auto& animation = view.get<Components::Animation>(entity);
+        auto& renderable = view.get<Components::Renderable>(entity);
+
+        animation.timer.update(dt);
+
+        if (animation.timer.is_done()) {
+            animation.timer.start(); // Resets elapsed to zero.
+
+            animation.current_frame++;
+
+            if (animation.current_frame >= animation.frames.size()) {
+                animation.current_frame = animation.frames.size() - 1;
+            }
+        }
+
+        renderable.texture = asset_manager.get_texture(animation.frames[animation.current_frame]);
+    }
+}
+
 void update_background_position(entt::registry& registry) {
     for (
         const auto player_view = registry.view<Components::Transform, Components::Player>();

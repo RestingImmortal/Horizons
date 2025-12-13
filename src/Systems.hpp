@@ -140,6 +140,12 @@ entt::entity spawn_weapon(
     entt::entity parent_ship
 );
 
+void update_animations(
+    entt::registry& registry,
+    AssetManager& asset_manager,
+    float dt
+);
+
 void update_background_position(
     entt::registry& registry
 );

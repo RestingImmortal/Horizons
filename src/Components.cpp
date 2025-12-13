@@ -7,6 +7,8 @@
 
 using namespace Components;
 
+
+
 Weapon::Weapon(const std::string& key, const AssetManager& asset_manager)
     : damage(0.0), lifetime(0.0), cooldown(2'000'000) {
     if (

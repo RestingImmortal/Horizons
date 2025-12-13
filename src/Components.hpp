@@ -16,6 +16,13 @@ namespace Components {
         uint32_t id;
     };
 
+    struct Animation {
+        std::vector<std::string> frames;
+        float frame_duration = 1.0f;
+        Timer timer;
+        size_t current_frame;
+    };
+
     struct Background {};
 
     struct Bullet {
