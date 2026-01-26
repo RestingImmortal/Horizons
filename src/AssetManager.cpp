@@ -96,8 +96,14 @@ MapData::MapData(const json& j) {
         });
     }
     for (const auto& item : j["objects"]) {
+        AnimatedSprite animated_sprite;
+        animated_sprite.interval = item.at("sprite").at("interval").get<float>();
+        for (const auto& texture : item.at("sprite")["textures"]) {
+            animated_sprite.textures.push_back(texture.get<std::string>());
+        }
+
         objects.push_back({
-            .texture = item.at("texture").get<std::string>(),
+            .sprite = animated_sprite,
             .x = item.at("x").get<float>(),
             .y = item.at("y").get<float>(),
             .layer = item.at("layer").get<int>()
@@ -123,8 +129,14 @@ MapData::MapData(const pugi::xml_document& d) {
         });
     }
     for (pugi::xml_node node : root.children("objects")) {
+        AnimatedSprite animated_sprite;
+        animated_sprite.interval = node.child("sprite").child("interval").text().as_float();
+        for (const auto& texture : node.child("sprite").children("textures")) {
+            animated_sprite.textures.emplace_back(texture.text().as_string());
+        }
+
         objects.push_back({
-            .texture = node.child("texture").text().as_string(),
+            .sprite = animated_sprite,
             .x = node.child("x").text().as_float(),
             .y = node.child("y").text().as_float(),
             .layer = node.child("layer").text().as_int()

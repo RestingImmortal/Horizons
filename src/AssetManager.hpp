@@ -16,6 +16,11 @@
 
 using json = nlohmann::json;
 
+struct AnimatedSprite {
+    float interval;
+    std::vector<std::string> textures;
+};
+
 struct WeaponData {
     std::string munition;
     float damage;
@@ -77,7 +82,7 @@ struct MapData {
     };
 
     struct ObjectMapData {
-        std::string texture;
+        AnimatedSprite sprite;
         float x;
         float y;
         int layer;
