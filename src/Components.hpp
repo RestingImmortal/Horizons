@@ -17,10 +17,13 @@ namespace Components {
     };
 
     struct Animation {
+        Animation() = default;
+        explicit Animation(const AnimatedSprite& sprite);
+
         std::vector<std::string> frames;
         float frame_duration = 1.0f;
         Timer timer;
-        size_t current_frame;
+        size_t current_frame = 0;
     };
 
     struct Background {};

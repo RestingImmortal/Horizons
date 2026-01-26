@@ -92,7 +92,7 @@ void load_map(
             spawn_object(
                 registry,
                 asset_manager,
-                object.texture,
+                object.sprite,
                 raylib::Vector2{object.x, object.y},
                 object.layer
             );
@@ -536,7 +536,7 @@ entt::entity spawn_engine(
 entt::entity spawn_object(
     entt::registry& registry,
     AssetManager& asset_manager,
-    const std::string& key,
+    const AnimatedSprite& sprite,
     raylib::Vector2 position,
     int layer
 ) {
@@ -545,7 +545,10 @@ entt::entity spawn_object(
     registry.emplace<Components::Transform>(entity, position);
 
     auto& object_renderable = registry.emplace<Components::Renderable>(entity);
-    object_renderable.texture = asset_manager.get_texture(key);
+    object_renderable.texture = asset_manager.get_texture(sprite.textures[0]);
+
+    auto& animation = registry.emplace<Components::Animation>(entity, sprite);
+    animation.timer.start(sprite.interval);
 
     registry.emplace<Components::RenderOrder>(entity, layer);
 

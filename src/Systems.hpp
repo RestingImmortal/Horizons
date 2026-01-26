@@ -104,7 +104,7 @@ entt::entity spawn_engine(
 entt::entity spawn_object(
     entt::registry& registry,
     AssetManager& asset_manager,
-    const std::string& key,
+    const AnimatedSprite& sprite,
     raylib::Vector2 position,
     int layer
 );

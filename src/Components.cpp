@@ -7,6 +7,14 @@
 
 using namespace Components;
 
+Animation::Animation(const AnimatedSprite& sprite) {
+
+    frames = sprite.textures;
+    frame_duration = sprite.interval;
+    current_frame = 0;
+}
+
+
 Weapon::Weapon(const std::string& key, const AssetManager& asset_manager)
     : damage(0.0), lifetime(0.0), cooldown(2'000'000) {
     if (

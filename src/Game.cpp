@@ -37,6 +37,7 @@ void Game::init() {
 void Game::update(const float dt) {
     update_weapon_timers(m_registry, dt);
     update_bullet_timers(m_registry, dt);
+    update_animations(m_registry, m_asset_manager, dt);
     player_movement(m_registry, m_asset_manager, dt);
     update_physics_transforms(m_registry, dt);
     update_local_transforms(m_registry);
