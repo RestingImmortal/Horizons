@@ -763,7 +763,7 @@ void update_animations(
             animation.current_frame++;
 
             if (animation.current_frame >= animation.frames.size()) {
-                animation.current_frame = animation.frames.size() - 1;
+                animation.current_frame = 0;
             }
         }
 
