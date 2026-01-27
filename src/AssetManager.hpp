@@ -22,7 +22,7 @@ struct AnimatedSprite {
 };
 
 struct WeaponData {
-    std::string munition;
+    AnimatedSprite munition;
     float damage;
     float lifetime;
     float cooldown;

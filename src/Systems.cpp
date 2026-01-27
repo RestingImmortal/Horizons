@@ -370,7 +370,11 @@ void print_weapon(
     } else {
         const std::string indent(indentation_level, '-');
 
-        std::println("{}Weapon Munition: {}", indent, (*weapon_result)->munition);
+        std::println("{}Weapon Munition:", indent);
+        std::println("{}-Interval: {}", indent, (*weapon_result)->munition.interval);
+        for (const auto& texture : (*weapon_result)->munition.textures) {
+            std::println("{}-Texture: {}", indent, texture);
+        }
         std::println("{}Weapon Damage: {}", indent, (*weapon_result)->damage);
         std::println("{}Weapon Lifetime: {}", indent, (*weapon_result)->lifetime);
         std::println("{}Weapon Cooldown: {}", indent, (*weapon_result)->cooldown);
@@ -480,7 +484,10 @@ entt::entity spawn_bullet(
     bullet_component.despawn_timer.start(weapon.lifetime);
 
     auto& renderable = registry.emplace<Components::Renderable>(bullet);
-    renderable.texture = asset_manager.get_texture(weapon.munition);
+    renderable.texture = asset_manager.get_texture(weapon.munition.textures[0]);
+
+    auto& animation = registry.emplace<Components::Animation>(bullet, weapon.munition);
+    animation.timer.start(weapon.munition.interval);
 
     registry.emplace<Components::RenderOrder>(bullet, 10'000);
 

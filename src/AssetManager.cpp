@@ -9,7 +9,13 @@
 #include "Logger.hpp"
 
 WeaponData::WeaponData(const json& j) {
-    munition = j.value("munition", "");
+    AnimatedSprite animated_sprite;
+    animated_sprite.interval = j.at("munition").at("interval").get<float>();
+    for (const auto& texture : j.at("munition")["textures"]) {
+        animated_sprite.textures.push_back(texture.get<std::string>());
+    }
+
+    munition = animated_sprite;
     damage   = j.value("damage", 0.0f);
     lifetime = j.value("lifetime", 0.0f);
     cooldown = j.value("cooldown", 0.0f);
@@ -18,7 +24,14 @@ WeaponData::WeaponData(const json& j) {
 
 WeaponData::WeaponData(const pugi::xml_document& d) {
     const auto root = d.child("WeaponData");
-    munition = root.child("munition").text().as_string("");
+
+    AnimatedSprite animated_sprite;
+    animated_sprite.interval = root.child("munition").child("interval").text().as_float(0.0);
+    for (const auto& texture : root.child("munition").children("textures")) {
+        animated_sprite.textures.emplace_back(texture.text().as_string(""));
+    }
+
+    munition = animated_sprite;
     damage   = root.child("damage").text().as_float(0.0f);
     lifetime = root.child("lifetime").text().as_float(0.0f);
     cooldown = root.child("cooldown").text().as_float(0.0f);

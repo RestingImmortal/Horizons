@@ -99,7 +99,7 @@ namespace Components {
         Weapon() = default;
         Weapon(const std::string& key, const AssetManager& asset_manager);
 
-        std::string munition;
+        AnimatedSprite munition;
         float damage = 0.0f;
         float lifetime = 0.01f;
         float cooldown = 2'000'000.0f;
